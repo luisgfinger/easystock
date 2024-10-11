@@ -1,0 +1,55 @@
+#header{
+    width: 25rem;
+    height: 3.25rem;
+    background-color: var(--bg-color);
+    margin-top: 5%;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    border-bottom: 2px solid var(--primary-color);
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+}
+
+#header .logotype{
+    width: 12.75rem;
+    
+}
+
+#header .logotype >img{
+    width: 100%;
+    height: 100%;
+}
+
+#header .profileIcon{
+    width: 40px;
+    height: 40px;
+}
+
+#header .profileIcon >img{
+    width: 100%;
+    height: 100%;
+}
+
+#navigate{
+    padding-top: 1rem;
+    background-color: var(--bg-color);
+    margin-top: 0 !important;
+}
+
+#navigate .navbar{
+    justify-content: center;
+}
+
+#navigate .navbar >ul{
+    gap: 1rem;
+}
+
+#listas{
+    background-color: var(--bg-color);
+    padding: 1rem;
+}
+
+section{
+    margin-top: 5%;
+}
