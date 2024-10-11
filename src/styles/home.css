@@ -35,6 +35,7 @@
     padding-top: 1rem;
     background-color: var(--bg-color);
     margin-top: 0 !important;
+    justify-content: center;
 }
 
 #navigate .navbar{

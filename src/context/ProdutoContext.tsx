@@ -26,7 +26,7 @@ export const ProdutoProvider: React.FC<{ children: ReactNode }> = ({
       descricao: "Descricao 1",
       preco: 1,
       quantidade: 1,
-      imagem: "url 1",
+      imagem: "/assets/products/caixa.png",
       fornecedorId: 1,
     },
     {
@@ -35,7 +35,7 @@ export const ProdutoProvider: React.FC<{ children: ReactNode }> = ({
       descricao: "Descricao 2",
       preco: 2,
       quantidade: 2,
-      imagem: "url 2",
+      imagem: "/assets/products/caixa.png",
       fornecedorId: 1,
     },
   ]);

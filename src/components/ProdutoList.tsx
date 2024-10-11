@@ -11,25 +11,27 @@ import React from 'react';
 import { useProduto } from '../context/ProdutoContext';
 import { useFornecedor } from '../context/FornecedorContext';
 
+import '../styles/produto.css'
+
 const ProdutoList: React.FC = () => {
   const { produtos } = useProduto(); 
   const { fornecedores } = useFornecedor(); 
 
   return (
-    <ul>
+    <ul id='content' className='flex-column'>
       {produtos.length > 0 ? (
         produtos.map((produto) => {
           const fornecedor = fornecedores.find(f => f.id === produto.fornecedorId);
           return (
             <li key={produto.id}>
-              <h3>{produto.nome}</h3>
-              <ul>
-                <li>Descrição: {produto.descricao}</li>
-                <li>Preço: {produto.preco}</li>
-                <li>Quantidade: {produto.quantidade}</li>
-                <li>Imagem: {produto.imagem}</li>
+              <ul className='flex-column'>  
+                <li><h2>{produto.nome}</h2></li>
+                <li><img src={produto.imagem} alt="img produto" /></li>
+                <li><h3>{produto.descricao}</h3></li>
+                <li><h3>R${produto.preco},00</h3></li>
+                <li> {fornecedor ? <p>{fornecedor.nome}</p> : <p>Fornecedor não encontrado</p>}</li>
               </ul>
-              {fornecedor ? <p>Fornecedor: {fornecedor.nome}</p> : <p>Fornecedor não encontrado</p>}
+             
             </li>
           );
         })
