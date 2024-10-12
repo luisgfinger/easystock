@@ -12,6 +12,8 @@ interface Produto {
 
 interface ProdutoContextType {
   produtos: Produto[];
+  addProduto: (novoProduto: Produto) => void;
+  updateProduto: (produtoAtualizado: Produto) => void; 
 }
 
 const ProdutoContext = createContext<ProdutoContextType | undefined>(undefined);
@@ -19,7 +21,7 @@ const ProdutoContext = createContext<ProdutoContextType | undefined>(undefined);
 export const ProdutoProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [produtos] = useState<Produto[]>([
+  const [produtos, setProdutos] = useState<Produto[]>([
     {
       id: 1,
       nome: "Produto 1",
@@ -40,8 +42,20 @@ export const ProdutoProvider: React.FC<{ children: ReactNode }> = ({
     },
   ]);
 
+  const addProduto = (novoProduto: Produto) => {
+    setProdutos([...produtos, novoProduto]);
+  };
+
+  const updateProduto = (produtoAtualizado: Produto) => {
+    setProdutos((newProdutos) =>
+      newProdutos.map((produto) =>
+        produto.id === produtoAtualizado.id ? produtoAtualizado : produto
+      )
+    );
+  };
+
   return (
-    <ProdutoContext.Provider value={{ produtos }}>
+    <ProdutoContext.Provider value={{ produtos, addProduto, updateProduto }}>
       {children}
     </ProdutoContext.Provider>
   );

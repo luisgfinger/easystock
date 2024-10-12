@@ -5,9 +5,9 @@ produtoId number Chave estrangeira para a tabela Produto
 quantidade number Quantidade do produto no pedido
 */
 
-import { useItemPedido } from "../context/ItemPedidoContext";
-import { usePedido } from "../context/PedidoContext";
-import { useProduto } from "../context/ProdutoContext";
+import { useItemPedido } from "../../context/ItemPedidoContext";
+import { usePedido } from "../../context/PedidoContext";
+import { useProduto } from "../../context/ProdutoContext";
 import React from "react";
 
 const ItemPedidoList: React.FC = () => {

@@ -7,8 +7,8 @@ total number Valor total do pedido
 */
 
 import React from 'react';
-import { usePedido } from '../context/PedidoContext';
-import { useFornecedor } from '../context/FornecedorContext';
+import { usePedido } from '../../context/PedidoContext';
+import { useFornecedor } from '../../context/FornecedorContext';
 
 const PedidoList: React.FC = () => {
   const { pedidos } = usePedido(); 

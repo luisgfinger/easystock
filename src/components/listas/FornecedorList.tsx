@@ -5,7 +5,7 @@ endereco string Endereço do fornecedor
 */
 
 import React from 'react';
-import { useFornecedor } from '../context/FornecedorContext';
+import { useFornecedor } from '../../context/FornecedorContext';
 
 const FornecedorList: React.FC = () => {
   const { fornecedores } = useFornecedor(); 

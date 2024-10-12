@@ -7,9 +7,9 @@ produtoId number Chave estrangeira para a tabela Produto
 pedidoId number Chave estrangeira para a tabela Pedido (se aplicável)
 */
 
-import { usePedido } from "../context/PedidoContext";
-import { useProduto } from "../context/ProdutoContext";
-import { useTransacao } from "../context/TransacaoContext";
+import { usePedido } from "../../context/PedidoContext";
+import { useProduto } from "../../context/ProdutoContext";
+import { useTransacao } from "../../context/TransacaoContext";
 
 import React from "react";
 

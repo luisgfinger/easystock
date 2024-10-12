@@ -5,7 +5,7 @@ senha string Senha armazenada com hash
 */
 
 import React from 'react';
-import { useUsuario } from '../context/UsuarioContext';
+import { useUsuario } from '../../context/UsuarioContext';
 
 
 const UsuarioList: React.FC = () => {
