@@ -49,12 +49,21 @@
 #listas{
     background-color: var(--bg-color);
     padding: 1rem;
+    align-items: center;
+    gap: 1rem;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+#listas .add-button button{
+    width: 7rem;
+}
+
+#listas img{
+    width: 100px;
+    width: 100px;
 }
 
 section{
     margin-top: 5%;
-}
-
-button{
-    width: 30%;
 }

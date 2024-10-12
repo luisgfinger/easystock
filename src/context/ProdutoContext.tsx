@@ -14,6 +14,7 @@ interface ProdutoContextType {
   produtos: Produto[];
   addProduto: (novoProduto: Produto) => void;
   updateProduto: (produtoAtualizado: Produto) => void; 
+  deleteProduto: (id: number) => void;
 }
 
 const ProdutoContext = createContext<ProdutoContextType | undefined>(undefined);
@@ -54,8 +55,14 @@ export const ProdutoProvider: React.FC<{ children: ReactNode }> = ({
     );
   };
 
+  const deleteProduto = (id: number) => {
+    setProdutos((currentProdutos) =>
+      currentProdutos.filter((produto) => produto.id !== id)
+    );
+  };
+
   return (
-    <ProdutoContext.Provider value={{ produtos, addProduto, updateProduto }}>
+    <ProdutoContext.Provider value={{ produtos, addProduto, updateProduto, deleteProduto }}>
       {children}
     </ProdutoContext.Provider>
   );

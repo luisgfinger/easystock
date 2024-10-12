@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useProduto } from "../../context/ProdutoContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface FormProps {
   edit: boolean;
-  id?: number;
 }
 
-const FormProduto: React.FC<FormProps> = ({ edit, id }) => {
+const FormProduto: React.FC<FormProps> = ({ edit }) => {
   const { produtos, addProduto, updateProduto } = useProduto();
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
@@ -17,9 +16,11 @@ const FormProduto: React.FC<FormProps> = ({ edit, id }) => {
   const [fornecedorId, setFornecedorId] = useState(1);
   const navigate = useNavigate();
 
+  const { id } = useParams<{ id: string }>();
+
   useEffect(() => {
-    if (edit && id !== undefined) {
-      const produto = produtos.find((p) => p.id === id);
+    if (edit && id) {
+      const produto = produtos.find((p) => p.id === Number(id));
       if (produto) {
         setNome(produto.nome);
         setDescricao(produto.descricao);
@@ -33,9 +34,9 @@ const FormProduto: React.FC<FormProps> = ({ edit, id }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const novoProduto = {
-      id: id ?? Math.random(),
+      id: id ? Number(id) : Math.random(), 
       nome,
       descricao,
       preco,
@@ -44,12 +45,12 @@ const FormProduto: React.FC<FormProps> = ({ edit, id }) => {
       fornecedorId,
     };
 
-    if (edit && id !== undefined) {
-      updateProduto(novoProduto);
+    if (edit && id) {
+      updateProduto(novoProduto); 
     } else {
-      addProduto(novoProduto);
+      addProduto(novoProduto); 
     }
-    
+
     navigate("/produtos");
   };
 

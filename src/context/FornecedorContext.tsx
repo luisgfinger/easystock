@@ -10,6 +10,8 @@ interface Fornecedor {
 interface FornecedorContextType {
   fornecedores: Fornecedor[]; 
   addFornecedor: (novoFornecedor: Fornecedor) => void;
+  updateFornecedor: (FornecedorAtualizado: Fornecedor) => void; 
+  deleteFornecedor: (id: number) => void;
 }
 
 const FornecedorContext = createContext<FornecedorContextType | undefined>(undefined);
@@ -24,8 +26,22 @@ export const FornecedorProvider: React.FC<{ children: ReactNode }> = ({ children
     setFornecedores([...fornecedores, novoFornecedor]);
   };
 
+   const updateFornecedor = (FornecedorAtualizado: Fornecedor) => {
+    setFornecedores((newFornecedor) =>
+      newFornecedor.map((fornecedores) =>
+        fornecedores.id === FornecedorAtualizado.id ? FornecedorAtualizado : fornecedores
+      )
+    );
+  };
+
+  const deleteFornecedor = (id: number) => {
+    setFornecedores((currentFornecedores) =>
+      currentFornecedores.filter((fornecedores) => fornecedores.id !== id)
+    );
+  };
+
   return (
-    <FornecedorContext.Provider value={{fornecedores, addFornecedor}}>
+    <FornecedorContext.Provider value={{fornecedores, addFornecedor, updateFornecedor, deleteFornecedor}}>
       {children}
     </FornecedorContext.Provider>
   );
