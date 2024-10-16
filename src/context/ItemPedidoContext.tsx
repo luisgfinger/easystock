@@ -18,6 +18,9 @@ interface ItemPedido {
 
 interface ItemPedidoContextType {
   itemPedidos: ItemPedido[];
+  addItemPedido: (novoPedido: ItemPedido) => void;
+  updateItemPedido: (itemPedidoAtualizado: ItemPedido) => void; 
+  deleteItemPedido: (id: number) => void;
 }
 
 const ItemPedidoContext = createContext<ItemPedidoContextType | undefined>(undefined);
@@ -25,7 +28,8 @@ const ItemPedidoContext = createContext<ItemPedidoContextType | undefined>(undef
 export const ItemPedidoProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [itemPedidos] = useState<ItemPedido[]>([
+  const [itemPedidos, setItemPedidos] = useState<ItemPedido[]>([
+
     {
         id: 1,
         pedidoId: 1,
@@ -42,8 +46,26 @@ export const ItemPedidoProvider: React.FC<{ children: ReactNode }> = ({
     },
   ]);
 
+  const addItemPedido = (novoItemPedido: ItemPedido) => {
+    setItemPedidos([...itemPedidos, novoItemPedido]);
+  };
+
+  const updateItemPedido = (itemPedidoAtualizado: ItemPedido) => {
+    setItemPedidos((newItemPedidos) =>
+      newItemPedidos.map((itemPedido) =>
+        itemPedido.id === itemPedidoAtualizado.id ? itemPedidoAtualizado : itemPedido
+      )
+    );
+  };
+
+  const deleteItemPedido = (id: number) => {
+    setItemPedidos((currentItemPedidos) =>
+      currentItemPedidos.filter((itemPedido) => itemPedido.id !== id)
+    );
+  };
+
   return (
-    <ItemPedidoContext.Provider value={{ itemPedidos }}>
+    <ItemPedidoContext.Provider value={{ itemPedidos, addItemPedido, updateItemPedido, deleteItemPedido }}>
       {children}
     </ItemPedidoContext.Provider>
   );

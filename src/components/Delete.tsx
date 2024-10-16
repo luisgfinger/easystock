@@ -1,3 +1,4 @@
+import { useCliente } from "../context/ClienteContext";
 import { useFornecedor } from "../context/FornecedorContext";
 import { usePedido } from "../context/PedidoContext";
 import { useProduto } from "../context/ProdutoContext";
@@ -13,6 +14,8 @@ export default function Delete({ type }: DeleteProps) {
   const { produtos, deleteProduto } = useProduto();
   const { fornecedores, deleteFornecedor } = useFornecedor();
   const { pedidos, deletePedido } = usePedido();
+  const { clientes, deleteCliente } = useCliente();
+
   const navigate = useNavigate();
 
   if (type === "produto") {
@@ -37,6 +40,14 @@ export default function Delete({ type }: DeleteProps) {
       if (pedido) {
         deletePedido(pedido.id);
         navigate("/pedidos");
+      }
+    }, [id, fornecedores, deleteFornecedor, navigate]);
+  } else if (type === "cliente") {
+    useEffect(() => {
+      const cliente = clientes.find((p) => p.id === Number(id));
+      if (cliente) {
+        deleteCliente(cliente.id);
+        navigate("/clientes");
       }
     }, [id, fornecedores, deleteFornecedor, navigate]);
   }

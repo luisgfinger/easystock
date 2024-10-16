@@ -8,7 +8,7 @@ import { useFornecedor } from "../../context/FornecedorContext";
 import Button from "../Ui/Button";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import "../../styles/fornecedor.css";
+import "../../styles/list.css";
 
 const FornecedorList: React.FC = () => {
   const { fornecedores } = useFornecedor();
@@ -23,17 +23,17 @@ const FornecedorList: React.FC = () => {
   };
 
   return (
-    <ul className="fornecedor-content">
+    <ul className="content">
       {fornecedores.length > 0 ? (
         fornecedores.map((fornecedor) => (
           <li key={fornecedor.id}>
-            <ul className="fornecedor-inside flex-column">
+            <ul className="inside flex-column">
               <li>
                 <h3>{fornecedor.nome}</h3>
               </li>
               <li><p>{fornecedor.contato}</p></li>
               <li><p>{fornecedor.endereco}</p></li>
-              <div className="add-edit-button flex-column">
+              <div className="delete-edit-button flex-column">
                 <Button
                   text="Editar fornecedor"
                   onClick={() => editFornecedor(fornecedor.id)}

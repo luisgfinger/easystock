@@ -42,6 +42,11 @@
     justify-content: center;
 }
 
+#navigate .navbar a:hover{
+    color: var(--primary-color);
+    justify-content: center;
+}
+
 #navigate .navbar >ul{
     gap: 1rem;
 }
@@ -66,4 +71,8 @@
 
 section{
     margin-top: 5%;
+}
+
+.filtro-form input{
+    margin-bottom: 0.5rem;
 }

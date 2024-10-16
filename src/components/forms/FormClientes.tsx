@@ -1,22 +1,16 @@
-/*id number Chave primária
-nome string Nome do fornecedor
-contato string Informações de contato
-endereco string Endereço do fornecedor
-*/
-
+import { useCliente } from "../../context/ClienteContext";
 import React, { useState, useEffect } from "react";
-import { useFornecedor } from "../../context/FornecedorContext";
 import { useNavigate, useParams } from "react-router-dom";
-
-import '../../styles/form.css'
+import "../../styles/form.css";
 
 interface FormProps {
   edit: boolean;
 }
 
-const FormFornecedores: React.FC<FormProps> = ({ edit }) => {
-  const { fornecedores, addFornecedor, updateFornecedor } = useFornecedor();
+const FormClientes: React.FC<FormProps> = ({ edit }) => {
+  const { clientes, addCliente, updateCliente } = useCliente();
   const [nome, setNome] = useState("");
+  const [cpf_cnpj, setCpf_cnpj] = useState("");
   const [contato, setContato] = useState("");
   const [endereco, setEndereco] = useState("");
   const navigate = useNavigate();
@@ -25,37 +19,39 @@ const FormFornecedores: React.FC<FormProps> = ({ edit }) => {
 
   useEffect(() => {
     if (edit && id) {
-      const fornecedor = fornecedores.find((p) => p.id === Number(id));
-      if (fornecedor) {
-        setNome(fornecedor.nome);
-        setContato(fornecedor.contato);
-        setEndereco(fornecedor.endereco);
+      const cliente = clientes.find((p) => p.id === Number(id));
+      if (cliente) {
+        setNome(cliente.nome);
+        setCpf_cnpj(cliente.cpf_cnpj);
+        setContato(cliente.contato);
+        setEndereco(cliente.endereco);
       }
     }
-  }, [edit, id, fornecedores]);
+  }, [edit, id, clientes]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const novoFornecedor = {
-      id: id ? Number(id) : Math.random(), 
+    const novoCliente = {
+      id: id ? Number(id) : Math.random(),
       nome,
+      cpf_cnpj,
       contato,
       endereco,
     };
 
     if (edit && id) {
-      updateFornecedor(novoFornecedor); 
+      updateCliente(novoCliente);
     } else {
-      addFornecedor(novoFornecedor); 
+      addCliente(novoCliente);
     }
 
-    navigate("/fornecedores");
+    navigate("/clientes");
   };
 
   return (
     <div className="form-page flex-column">
-      <h3>{edit ? "Editar Fornecedor" : "Cadastro de Fornecedor"}</h3>
+      <h3>{edit ? "Editar Cliente" : "Cadastro de Cliente"}</h3>
       <form onSubmit={handleSubmit} className="flex-column">
         <label>Nome:</label>
         <input
@@ -65,7 +61,7 @@ const FormFornecedores: React.FC<FormProps> = ({ edit }) => {
           onChange={(e) => setNome(e.target.value)}
           required
         />
-       
+
         <label>Contato:</label>
         <input
           type="text"
@@ -74,7 +70,16 @@ const FormFornecedores: React.FC<FormProps> = ({ edit }) => {
           onChange={(e) => setContato(e.target.value)}
           required
         />
-        
+
+        <label>CPF_CNPJ:</label>
+        <input
+          type="text"
+          maxLength={14}
+          value={cpf_cnpj}
+          onChange={(e) => setCpf_cnpj(e.target.value)}
+          required
+        />
+
         <label>Endereço:</label>
         <input
           type="text"
@@ -84,10 +89,10 @@ const FormFornecedores: React.FC<FormProps> = ({ edit }) => {
           required
         />
 
-        <button className="submit-button" type="submit">{edit ? "Atualizar" : "Cadastrar"}</button> 
+        <button className="submit-button" type="submit">{edit ? "Atualizar" : "Cadastrar"}</button>
       </form>
     </div>
   );
 };
 
-export default FormFornecedores;
+export default FormClientes;

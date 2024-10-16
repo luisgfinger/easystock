@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useProduto } from "../../context/ProdutoContext";
 import { useNavigate, useParams } from "react-router-dom";
 
+import '../../styles/form.css';
+
 interface FormProps {
   edit: boolean;
 }
@@ -55,9 +57,9 @@ const FormProduto: React.FC<FormProps> = ({ edit }) => {
   };
 
   return (
-    <div>
+    <div className="form-page flex-column">
       <h3>{edit ? "Editar Produto" : "Cadastro de Produto"}</h3>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="flex-column">
         <label>Nome:</label>
         <input
           type="text"
@@ -106,7 +108,7 @@ const FormProduto: React.FC<FormProps> = ({ edit }) => {
           required
         />
         <br />
-        <button type="submit">{edit ? "Atualizar" : "Cadastrar"}</button>
+        <button className="submit-button" type="submit">{edit ? "Atualizar" : "Cadastrar"}</button>
       </form>
     </div>
   );

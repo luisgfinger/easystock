@@ -6,10 +6,10 @@ status string Status do pedido (ex: "Pendente", "Concluído")
 total number Valor total do pedido
 */
 
-
-import React, { useState, useEffect } from "react";
 import { usePedido } from "../../context/PedidoContext";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import "../../styles/form.css";
 
 interface FormProps {
   edit: boolean;
@@ -30,9 +30,9 @@ const FormPedido: React.FC<FormProps> = ({ edit }) => {
       const pedido = pedidos.find((p) => p.id === Number(id));
       if (pedido) {
         setData(pedido.data),
-        setFornecedorId(pedido.fornecedorId),
-        setStatus(pedido.status),
-        setTotal(pedido.total)
+          setFornecedorId(pedido.fornecedorId),
+          setStatus(pedido.status),
+          setTotal(pedido.total);
       }
     }
   }, [edit, id, pedidos]);
@@ -41,7 +41,7 @@ const FormPedido: React.FC<FormProps> = ({ edit }) => {
     e.preventDefault();
 
     const novoPedido = {
-      id: id ? Number(id) : Math.random(), 
+      id: id ? Number(id) : Math.random(),
       data: new Date(),
       fornecedorId,
       status,
@@ -49,18 +49,18 @@ const FormPedido: React.FC<FormProps> = ({ edit }) => {
     };
 
     if (edit && id) {
-      updatePedido(novoPedido); 
+      updatePedido(novoPedido);
     } else {
-      addPedido(novoPedido); 
+      addPedido(novoPedido);
     }
 
     navigate("/pedidos");
   };
 
   return (
-    <div>
+    <div className="form-page flex-column">
       <h3>{edit ? "Editar Pedido" : "Cadastro de Pedido"}</h3>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="flex-column">
         <label>FornecedorId:</label>
         <input
           type="number"
@@ -68,7 +68,6 @@ const FormPedido: React.FC<FormProps> = ({ edit }) => {
           onChange={(e) => setFornecedorId(Number(e.target.value))}
           required
         />
-        <br />
         <label>Status:</label>
         <input
           type="text"
@@ -76,7 +75,7 @@ const FormPedido: React.FC<FormProps> = ({ edit }) => {
           onChange={(e) => setStatus(e.target.value)}
           required
         />
-        <br />
+
         <label>Total:</label>
         <input
           type="number"
@@ -84,8 +83,10 @@ const FormPedido: React.FC<FormProps> = ({ edit }) => {
           onChange={(e) => setTotal(Number(e.target.value))}
           required
         />
-        <br />
-        <button type="submit">{edit ? "Atualizar" : "Cadastrar"}</button>
+
+        <button className="submit-button" type="submit">
+          {edit ? "Atualizar" : "Cadastrar"}
+        </button>
       </form>
     </div>
   );

@@ -3,7 +3,9 @@ id number Chave primária
 pedidoId number Chave estrangeira para a tabela Pedido
 produtoId number Chave estrangeira para a tabela Produto
 quantidade number Quantidade do produto no pedido
+precoUnitario number Preço unitário do produto no pedido
 */
+
 
 import { useItemPedido } from "../../context/ItemPedidoContext";
 import { usePedido } from "../../context/PedidoContext";
@@ -26,13 +28,6 @@ const ItemPedidoList: React.FC = () => {
               <h3>ItemPedido {itemPedido.id}</h3>
               <ul>
                 <li>
-                  {pedido ? (
-                    <p>Pedido: {pedido.id}</p>
-                  ) : (
-                    <p>Pedido não encontrado</p>
-                  )}
-                </li>
-                <li>
                   {produto ? (
                     <p>Produto: {produto.id}</p>
                   ) : (
@@ -40,7 +35,7 @@ const ItemPedidoList: React.FC = () => {
                   )}
                 </li>
                 <li>Quantidade: {itemPedido.quantidade}</li>
-                <li>Preço unitário: {itemPedido.precoUnitario}</li>
+                <li>Preço: {itemPedido.precoUnitario}</li>
               </ul>
             </li>
           );
