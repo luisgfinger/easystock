@@ -16,7 +16,7 @@ import "../styles/home.css";
 import FormClientes from "../components/forms/FormClientes";
 import ClienteList from "../components/listas/ClienteList";
 import { ClienteProvider } from "../context/ClienteContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -24,7 +24,12 @@ export default function Home() {
   const [buscaNome, setBuscaNome] = useState("");
   const [buscaFornecedor, setBuscaFornecedor] = useState("");
   const [ordenacao, setOrdenacao] = useState("crescente");
+  const [ordenacaoData, setOrdenacaoData] = useState("dataCrescente");
+  const [ordenacaoValor, setOrdenacaoValor] = useState("valorCrescente");
   const [buscaCpf_cnpj, setBuscaCpf_cnpj] = useState("");
+  const [buscaContato, setBuscaContato] = useState("");
+  const [buscaData, setBuscaData] = useState("");
+  const [buscaStatus, setBuscaStatus] = useState("");
 
   const addProduto = () => {
     navigate("/produtos/cadastrar");
@@ -39,13 +44,7 @@ export default function Home() {
   };
 
   const addCliente = () => {
-    navigate("/clietes/cadastrar");
-  };
-
-  const handleOrdenacaoChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setOrdenacao(event.target.value);
+    navigate("/clientes/cadastrar"); 
   };
 
   return (
@@ -91,7 +90,26 @@ export default function Home() {
                         <div className="add-button">
                           <Button text="Adicionar" onClick={addFornecedor} />
                         </div>
-                        <FornecedorList />
+                        <form className="filtro-form flex-column">
+                          <label>Nome: </label>
+                          <input
+                            type="text"
+                            value={buscaNome}
+                            onChange={(e) => setBuscaNome(e.target.value)}
+                            placeholder="Insira o nome"
+                          />
+                          <label>Contato: </label>
+                          <input
+                            type="text"
+                            value={buscaContato}
+                            onChange={(e) => setBuscaContato(e.target.value)}
+                            placeholder="Insira o contato"
+                          />
+                        </form>
+                        <FornecedorList
+                          buscaNome={buscaNome}
+                          buscaContato={buscaContato}
+                        />
                       </>
                     }
                   />
@@ -131,7 +149,10 @@ export default function Home() {
                             placeholder="Insira CPF ou CNPJ"
                           />
                         </form>
-                        <ClienteList />
+                        <ClienteList
+                          buscaNome={buscaNome}
+                          buscaCpf_cnpj={buscaCpf_cnpj}
+                        />
                       </>
                     }
                   />
@@ -173,7 +194,7 @@ export default function Home() {
                           <label>Ordenar por preço: </label>
                           <select
                             value={ordenacao}
-                            onChange={handleOrdenacaoChange}
+                            onChange={(e) => setOrdenacao(e.target.value)}
                           >
                             <option value="crescente">Crescente</option>
                             <option value="decrescente">Decrescente</option>
@@ -207,7 +228,45 @@ export default function Home() {
                         <div className="add-button">
                           <Button text="Adicionar" onClick={addPedido} />
                         </div>
-                        <PedidoList />
+                        <form className="filtro-form flex-column">
+                          <label>Data: </label>
+                          <input
+                            type="date"
+                            value={buscaData}
+                            onChange={(e) => setBuscaData(e.target.value)} 
+                          />
+                          <label>Status: </label>
+                          <select
+                            value={buscaStatus}
+                            onChange={(e) => setBuscaStatus(e.target.value)}
+                          >
+                            <option value="">Selecione um status</option>
+                            <option value="pendente">Pendente</option>
+                            <option value="concluido">Concluído</option>
+                          </select>
+                          <label>Ordenar por data: </label>
+                          <select
+                            value={ordenacaoData} 
+                            onChange={(e) => setOrdenacaoData(e.target.value)}
+                          >
+                            <option value="dataCrescente">Crescente</option>
+                            <option value="dataDescrescente">Decrescente</option>
+                          </select>
+                          <label>Ordenar por valor: </label>
+                          <select
+                            value={ordenacaoValor} 
+                            onChange={(e) => setOrdenacaoValor(e.target.value)}
+                          >
+                            <option value="valorCrescente">Crescente</option>
+                            <option value="valorDescrescente">Decrescente</option>
+                          </select>
+                        </form>
+                        <PedidoList
+                          buscaData={buscaData} 
+                          buscaStatus={buscaStatus} 
+                          ordenacaoData={ordenacaoData}
+                          ordenacaoValor={ordenacaoValor}
+                        />
                       </>
                     }
                   />

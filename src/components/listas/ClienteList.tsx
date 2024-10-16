@@ -3,7 +3,12 @@ import Button from "../Ui/Button";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const ClienteList: React.FC = () => {
+interface ClienteListProps {
+  buscaNome?: string;
+  buscaCpf_cnpj?: string;
+}
+
+const ClienteList: React.FC<ClienteListProps> = ({ buscaNome, buscaCpf_cnpj }) => {
   const { clientes } = useCliente();
   const navigate = useNavigate();
 
@@ -15,10 +20,26 @@ const ClienteList: React.FC = () => {
     navigate(`/clientes/deletar/${id}`);
   };
 
+  const ClientesFiltrados = clientes.filter((cliente) => {
+    const nomeMatch = buscaNome
+      ? cliente.nome.toLowerCase().includes(buscaNome.toLowerCase())
+      : true;
+
+    const cpf_cnpjMatch = buscaCpf_cnpj
+      ? cliente.cpf_cnpj.toLowerCase().includes(buscaCpf_cnpj.toLowerCase())
+      : true;
+
+    return nomeMatch && cpf_cnpjMatch;
+  });
+
+  
+
+
   return (
     <ul className="content">
-      {clientes.length > 0 ? (
-        clientes.map((cliente) => (
+      {ClientesFiltrados.length > 0 ? (
+        ClientesFiltrados.map((cliente) => (
+          
           <li key={cliente.id}>
             <ul className="inside flex-column">
               <li>

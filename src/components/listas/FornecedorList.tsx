@@ -10,7 +10,12 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/list.css";
 
-const FornecedorList: React.FC = () => {
+interface FornecedorListProps{
+  buscaNome?: string,
+  buscaContato?: string
+}
+
+const FornecedorList: React.FC<FornecedorListProps> = ({ buscaNome, buscaContato }) => {
   const { fornecedores } = useFornecedor();
   const navigate = useNavigate();
 
@@ -22,10 +27,22 @@ const FornecedorList: React.FC = () => {
     navigate(`/fornecedores/deletar/${id}`);
   };
 
+  const FornecedoresFiltrados = fornecedores.filter((fornecedor) => {
+    const nomeMatch = buscaNome
+      ? fornecedor.nome.toLowerCase().includes(buscaNome.toLowerCase())
+      : true;
+
+    const contatoMatch = buscaContato
+      ? fornecedor.contato.toLowerCase().includes(buscaContato.toLowerCase())
+      : true;
+
+    return nomeMatch && contatoMatch;
+  });
+
   return (
     <ul className="content">
-      {fornecedores.length > 0 ? (
-        fornecedores.map((fornecedor) => (
+      {FornecedoresFiltrados.length > 0 ? (
+        FornecedoresFiltrados.map((fornecedor) => (
           <li key={fornecedor.id}>
             <ul className="inside flex-column">
               <li>

@@ -1,18 +1,17 @@
-/*
-id number Chave primária
-data Date Data de criação do pedido
-fornecedorId number Chave estrangeira para a tabela Fornecedor
-status string Status do pedido (ex: "Pendente", "Concluído")
-total number Valor total do pedido
-*/
-
 import { useFornecedor } from "../../context/FornecedorContext";
 import { usePedido } from "../../context/PedidoContext";
 import Button from "../Ui/Button";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const PedidoList: React.FC = () => {
+interface PedidoListProps {
+  buscaData?: string;
+  buscaStatus?: string;
+  ordenacaoData?: string; 
+  ordenacaoValor?: string;
+}
+
+const PedidoList: React.FC<PedidoListProps> = ({ buscaData, buscaStatus, ordenacaoData, ordenacaoValor }) => {
   const { pedidos } = usePedido();
   const { fornecedores } = useFornecedor();
   const navigate = useNavigate();
@@ -33,10 +32,40 @@ const PedidoList: React.FC = () => {
     return `${day}/${month}/${year}`;
   };
 
+  const pedidosFiltrados = pedidos
+    .filter((pedido) => {
+      const dataMatch = buscaData
+        ? formatarData(pedido.data.toISOString()) === buscaData
+        : true;
+      const statusMatch = buscaStatus
+        ? pedido.status.toLowerCase().includes(buscaStatus.toLowerCase())
+        : true;
+      return dataMatch && statusMatch;
+    })
+    .sort((a, b) => {
+      if (ordenacaoData) {
+        if (ordenacaoData === "dataCrescente") {
+          return new Date(a.data).getTime() - new Date(b.data).getTime();
+        } else if (ordenacaoData === "dataDescrescente") {
+          return new Date(b.data).getTime() - new Date(a.data).getTime();
+        }
+      }
+
+      if (ordenacaoValor) {
+        if (ordenacaoValor === "valorCrescente") {
+          return a.total - b.total;
+        } else if (ordenacaoValor === "valorDescrescente") {
+          return b.total - a.total;
+        }
+      }
+
+      return 0; 
+    });
+
   return (
     <ul className="content">
-      {pedidos.length > 0 ? (
-        pedidos.map((pedido) => {
+      {pedidosFiltrados.length > 0 ? (
+        pedidosFiltrados.map((pedido) => {
           const fornecedor = fornecedores.find(
             (f) => f.id === pedido.fornecedorId
           );
@@ -53,7 +82,7 @@ const PedidoList: React.FC = () => {
                   )}
                 </li>
                 <li>Status: {pedido.status}</li>
-                <li>Total: R${pedido.total},00</li>
+                <li>Total: R${pedido.total.toFixed(2)}</li>
                 <div className="delete-edit-button flex-column">
                   <Button
                     text="Editar pedido"
