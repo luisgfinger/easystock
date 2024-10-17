@@ -7,11 +7,12 @@ import { useNavigate } from "react-router-dom";
 interface PedidoListProps {
   buscaData?: string;
   buscaStatus?: string;
-  ordenacaoData?: string; 
+  ordenacaoData?: string;
   ordenacaoValor?: string;
 }
 
 const PedidoList: React.FC<PedidoListProps> = ({ buscaData, buscaStatus, ordenacaoData, ordenacaoValor }) => {
+
   const { pedidos } = usePedido();
   const { fornecedores } = useFornecedor();
   const navigate = useNavigate();
@@ -32,43 +33,37 @@ const PedidoList: React.FC<PedidoListProps> = ({ buscaData, buscaStatus, ordenac
     return `${day}/${month}/${year}`;
   };
 
+  const formatarBuscaData = (dataString: string) => {
+    const [ano, mes, dia] = dataString.split('-');
+    return `${dia}/${mes}/${ano}`;
+  };
+
   const pedidosFiltrados = pedidos
-    .filter((pedido) => {
-      const dataMatch = buscaData
-        ? formatarData(pedido.data.toISOString()) === buscaData
-        : true;
-      const statusMatch = buscaStatus
-        ? pedido.status.toLowerCase().includes(buscaStatus.toLowerCase())
-        : true;
-      return dataMatch && statusMatch;
-    })
-    .sort((a, b) => {
-      if (ordenacaoData) {
-        if (ordenacaoData === "dataCrescente") {
-          return new Date(a.data).getTime() - new Date(b.data).getTime();
-        } else if (ordenacaoData === "dataDescrescente") {
-          return new Date(b.data).getTime() - new Date(a.data).getTime();
-        }
-      }
+  .filter((pedido) => {
+    const dataMatch = buscaData
+      ? formatarData(pedido.data.toISOString()) === formatarBuscaData(buscaData)
+      : true;
 
-      if (ordenacaoValor) {
-        if (ordenacaoValor === "valorCrescente") {
-          return a.total - b.total;
-        } else if (ordenacaoValor === "valorDescrescente") {
-          return b.total - a.total;
-        }
-      }
+    const statusMatch = buscaStatus
+      ? pedido.status.toLowerCase().includes(buscaStatus.toLowerCase())
+      : true;
 
-      return 0; 
-    });
+    return dataMatch && statusMatch;
+  })
+  .sort((a, b) => {
+    const dataA = new Date(a.data).getTime();
+    const dataB = new Date(b.data).getTime();
+    if (dataA !== dataB) {
+      return ordenacaoData === "dataCrescente" ? dataA - dataB : dataB - dataA;
+    }
+    return ordenacaoValor === "valorCrescente" ? a.total - b.total : b.total - a.total;
+  });
 
   return (
     <ul className="content">
       {pedidosFiltrados.length > 0 ? (
         pedidosFiltrados.map((pedido) => {
-          const fornecedor = fornecedores.find(
-            (f) => f.id === pedido.fornecedorId
-          );
+          const fornecedor = fornecedores.find((f) => f.id === pedido.fornecedorId);
           return (
             <li key={pedido.id}>
               <ul className="inside flex-column">
