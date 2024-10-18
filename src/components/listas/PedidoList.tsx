@@ -1,8 +1,10 @@
 import { useFornecedor } from "../../context/FornecedorContext";
+import { useItemPedido } from "../../context/ItemPedidoContext";
 import { usePedido } from "../../context/PedidoContext";
 import Button from "../Ui/Button";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useProduto } from "../../context/ProdutoContext";
 
 interface PedidoListProps {
   buscaData?: string;
@@ -15,6 +17,8 @@ const PedidoList: React.FC<PedidoListProps> = ({ buscaData, buscaStatus, ordenac
 
   const { pedidos } = usePedido();
   const { fornecedores } = useFornecedor();
+  const {itemPedidos} = useItemPedido();
+  const {produtos} = useProduto();
   const navigate = useNavigate();
 
   const editPedido = (id: number) => {
@@ -39,25 +43,25 @@ const PedidoList: React.FC<PedidoListProps> = ({ buscaData, buscaStatus, ordenac
   };
 
   const pedidosFiltrados = pedidos
-  .filter((pedido) => {
-    const dataMatch = buscaData
-      ? formatarData(pedido.data.toISOString()) === formatarBuscaData(buscaData)
-      : true;
+    .filter((pedido) => {
+      const dataMatch = buscaData
+        ? formatarData(pedido.data.toISOString()) === formatarBuscaData(buscaData)
+        : true;
 
-    const statusMatch = buscaStatus
-      ? pedido.status.toLowerCase().includes(buscaStatus.toLowerCase())
-      : true;
+      const statusMatch = buscaStatus
+        ? pedido.status.toLowerCase().includes(buscaStatus.toLowerCase())
+        : true;
 
-    return dataMatch && statusMatch;
-  })
-  .sort((a, b) => {
-    const dataA = new Date(a.data).getTime();
-    const dataB = new Date(b.data).getTime();
-    if (dataA !== dataB) {
-      return ordenacaoData === "dataCrescente" ? dataA - dataB : dataB - dataA;
-    }
-    return ordenacaoValor === "valorCrescente" ? a.total - b.total : b.total - a.total;
-  });
+      return dataMatch && statusMatch;
+    })
+    .sort((a, b) => {
+      const dataA = new Date(a.data).getTime();
+      const dataB = new Date(b.data).getTime();
+      if (dataA !== dataB) {
+        return ordenacaoData === "dataCrescente" ? dataA - dataB : dataB - dataA;
+      }
+      return ordenacaoValor === "valorCrescente" ? a.total - b.total : b.total - a.total;
+    });
 
   return (
     <ul className="content">
@@ -78,6 +82,24 @@ const PedidoList: React.FC<PedidoListProps> = ({ buscaData, buscaStatus, ordenac
                 </li>
                 <li>Status: {pedido.status}</li>
                 <li>Total: R${pedido.total.toFixed(2)}</li>
+                {itemPedidos.length > 0 ? (
+                  <ul className="itens">
+                    {itemPedidos.map(item => {
+                      const produto = produtos.find(p => p.id === item.produtoId);
+                      return (
+                        <li key={item.id}>
+                          {produto ? (
+                            `${produto.nome} - Quantidade: ${item.quantidade} - Preço Unitário: ${item.precoUnitario}`
+                          ) : (
+                            "Produto não encontrado"
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                ) : (
+                  <h3>Sem itens</h3>
+                )}
                 <div className="delete-edit-button flex-column">
                   <Button
                     text="Editar pedido"

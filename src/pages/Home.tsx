@@ -17,6 +17,7 @@ import FormClientes from "../components/forms/FormClientes";
 import ClienteList from "../components/listas/ClienteList";
 import { ClienteProvider } from "../context/ClienteContext";
 import { useEffect, useState } from "react";
+import { ItemPedidoProvider } from "../context/ItemPedidoContext";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -81,6 +82,7 @@ export default function Home() {
         <ClienteProvider>
           <ProdutoProvider>
             <PedidoProvider>
+              <ItemPedidoProvider>
               <div id="listas" className="flex-column">
                 <Routes>
                   <Route
@@ -285,6 +287,7 @@ export default function Home() {
                   />
                 </Routes>
               </div>
+              </ItemPedidoProvider>
             </PedidoProvider>
           </ProdutoProvider>
         </ClienteProvider>

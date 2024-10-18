@@ -19,7 +19,7 @@ interface ItemPedido {
 interface ItemPedidoContextType {
   itemPedidos: ItemPedido[];
   addItemPedido: (novoPedido: ItemPedido) => void;
-  updateItemPedido: (itemPedidoAtualizado: ItemPedido) => void; 
+  updateItemPedido: (itemPedidoAtualizado: ItemPedido) => void;
   deleteItemPedido: (id: number) => void;
 }
 
@@ -28,23 +28,7 @@ const ItemPedidoContext = createContext<ItemPedidoContextType | undefined>(undef
 export const ItemPedidoProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [itemPedidos, setItemPedidos] = useState<ItemPedido[]>([
-
-    {
-        id: 1,
-        pedidoId: 1,
-        produtoId: 1,
-        quantidade: 1,
-        precoUnitario: 10
-    },
-    {
-        id: 2,
-        pedidoId: 2,
-        produtoId: 2,
-        quantidade: 2,
-        precoUnitario: 20
-    },
-  ]);
+  const [itemPedidos, setItemPedidos] = useState<ItemPedido[]>([]);
 
   const addItemPedido = (novoItemPedido: ItemPedido) => {
     setItemPedidos([...itemPedidos, novoItemPedido]);
