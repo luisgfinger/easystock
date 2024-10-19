@@ -68,12 +68,12 @@ const PedidoList: React.FC<PedidoListProps> = ({ buscaData, buscaStatus, ordenac
         pedidosFiltrados.map((pedido) => {
           const fornecedor = fornecedores.find((f) => f.id === pedido.fornecedorId);
 
-          const totalPedido = itemPedidos
-            .filter(item => item.pedidoId === pedido.id)
-            .reduce((acc, item) => {
-              const produto = produtos.find(p => p.id === item.produtoId);
-              return acc + (produto ? item.precoUnitario * item.quantidade : 0);
-            }, 0);
+          const itensPedido = itemPedidos.filter(item => item.pedidoId === pedido.id);
+
+          const totalPedido = itensPedido.reduce((acc, item) => {
+            const produto = produtos.find(p => p.id === item.produtoId);
+            return acc + (produto ? item.precoUnitario * item.quantidade : 0);
+          }, 0);
 
           return (
             <li key={pedido.id}>
@@ -88,27 +88,27 @@ const PedidoList: React.FC<PedidoListProps> = ({ buscaData, buscaStatus, ordenac
                   )}
                 </li>
                 <li>Status: {pedido.status}</li>
-                {itemPedidos.length > 0 ? (
-                  <ul className="itens">
-                    {itemPedidos
-                      .filter(item => item.pedidoId === pedido.id) 
-                      .map(item => {
+                <li>
+                  {itensPedido.length > 0 ? (
+                    <ul className="itens">
+                      {itensPedido.map(item => {
                         const produto = produtos.find(p => p.id === item.produtoId);
                         return (
                           <li key={item.id}>
                             {produto ? (
-                              `${produto.nome} - Quantidade: ${item.quantidade} - Preço Unitário: ${item.precoUnitario}`
+                              `${produto.nome} - Quantidade: ${item.quantidade} - Preço Unitário: R$ ${item.precoUnitario.toFixed(2)}`
                             ) : (
                               "Produto não encontrado"
                             )}
                           </li>
                         );
                       })}
-                  </ul>
-                ) : (
-                  <h3>Sem itens</h3>
-                )}
-                <li>Total: R${totalPedido},00</li> 
+                    </ul>
+                  ) : (
+                    <h3>Sem itens</h3>
+                  )}
+                </li>
+                <li>Total: R$ {totalPedido.toFixed(2)},00</li>
                 <div className="delete-edit-button flex-column">
                   <Button
                     text="Editar pedido"

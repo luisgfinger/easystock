@@ -32,7 +32,7 @@ export const TransacaoProvider: React.FC<{ children: ReactNode }> = ({
     {
         id: 1,
         data: new Date(),
-        tipo: 'Entrada',
+        tipo: 'entrada',
         valor: 10,
         produtoId: 1,
         pedidoId: 1
@@ -40,7 +40,7 @@ export const TransacaoProvider: React.FC<{ children: ReactNode }> = ({
     {
         id: 2,
         data: new Date(),
-        tipo: 'Saída',
+        tipo: 'saida',
         valor: 20,
         produtoId: 2,
         pedidoId: 2

@@ -14,8 +14,8 @@ import { useTransacao } from "../../context/TransacaoContext";
 import React from "react";
 
 interface TransacaoListProps{
-  buscaTipo: string;
-  buscaData: string;
+  buscaTipo?: string;
+  buscaData?: string;
 }
 
 const TransacaoList: React.FC<TransacaoListProps> = ({buscaTipo, buscaData}) => {

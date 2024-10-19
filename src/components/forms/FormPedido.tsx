@@ -5,6 +5,7 @@ import "../../styles/form.css";
 import { useFornecedor } from "../../context/FornecedorContext";
 import { useItemPedido } from "../../context/ItemPedidoContext";
 import { useProduto } from "../../context/ProdutoContext";
+import { useTransacao } from "../../context/TransacaoContext";
 
 interface FormProps {
   edit: boolean;
@@ -13,6 +14,7 @@ interface FormProps {
 const FormPedido: React.FC<FormProps> = ({ edit }) => {
   const { pedidos, addPedido, updatePedido } = usePedido();
   const { fornecedores } = useFornecedor();
+  const { addTransacao } = useTransacao();
   const { produtos } = useProduto();
   const { addItemPedido } = useItemPedido();
   const [fornecedorId, setFornecedorId] = useState(0);
@@ -21,10 +23,6 @@ const FormPedido: React.FC<FormProps> = ({ edit }) => {
   const [idProduto, setIdProduto] = useState(0);
   const [quantidade, setQuantidade] = useState(0);
   const [precoUnit, setPrecoUnit] = useState(0);
-  const [tipo, setTipo] = useState("");
-  const [valor, setValor] = useState(0);
-  const [produtoId, setProdutoId] = useState(0);
-  const [pedidoId, setPedidoId] = useState(0);
   const [itensTemp, setItensTemp] = useState<any[]>([]);
 
   const navigate = useNavigate();
@@ -45,7 +43,7 @@ const FormPedido: React.FC<FormProps> = ({ edit }) => {
     e.preventDefault();
     const novoItemPedido = {
       id: Math.random(),
-      pedidoId: id ? Number(id) : Math.random(),
+      pedidoId: pedido.id,
       produtoId: idProduto,
       quantidade,
       precoUnitario: precoUnit,
@@ -75,27 +73,21 @@ const FormPedido: React.FC<FormProps> = ({ edit }) => {
       addPedido(novoPedido);
     }
 
-    itensTemp.forEach((item) => addItemPedido(item));
+    itensTemp.forEach((item) => {
+      addItemPedido(item);
+      const novaTransacao = {
+        id: Math.random(),
+        data: new Date(),
+        tipo: 'saida',
+        valor: item.quantidade * item.precoUnitario,
+        produtoId: item.produtoId,
+        pedidoId: novoPedido.id,
+      };
+      addTransacao(novaTransacao);
+    });
 
     navigate("/pedidos");
   };
-
-/*
-id number Chave primária
-data Date Data da transação
-tipo string Tipo da transação (ex: "Entrada", "Saída")
-valor number Valor da transação
-produtoId number Chave estrangeira para a tabela Produto
-pedidoId number Chave estrangeira para a tabela Pedido (se aplicável)
-*/
-
-  const novaTransacao = {
-    id: Math.random(),
-    data: new Date(),
-    tipo: tipo,
-    produtoId: produtoId,
-    pedidoId: pedidoId
-  }
 
   return (
     <div className="form-page flex-column">
@@ -116,21 +108,14 @@ pedidoId number Chave estrangeira para a tabela Pedido (se aplicável)
         </select>
         <label>Status:</label>
         <select
-        value={status}
-        onChange={(e) => setStatus(e.target.value)}
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
         >
           <option value="">Selecione um estado</option>
           <option value={"pendente"}>Pendente</option>
           <option value={"concluído"}>Concluído</option>
 
         </select>
-
-        <label>Total</label>
-        <input
-          type="number"
-          value={total}
-          onChange={(e) => setTotal(Number(e.target.value))}
-        />
 
         <h4>Adicionar Itens ao Pedido</h4>
         {produtos.length > 0 ? (
@@ -155,7 +140,8 @@ pedidoId number Chave estrangeira para a tabela Pedido (se aplicável)
                 </option>
               ))}
             </select>
-
+            
+            <label>Quantidade</label>
             <input
               type="number"
               value={quantidade}
@@ -164,7 +150,7 @@ pedidoId number Chave estrangeira para a tabela Pedido (se aplicável)
             />
             {precoUnit > 0 && (
               <div>
-                <p>Total do item: R${precoUnit*quantidade},00</p>
+                <p>Total do item: R${precoUnit * quantidade},00</p>
               </div>
             )}
 
@@ -183,10 +169,9 @@ pedidoId number Chave estrangeira para a tabela Pedido (se aplicável)
               return (
                 <li key={item.id}>
                   {produto
-                    ? `${produto.nome} - Quantidade: ${
-                        item.quantidade
-                      } - Preço Unitário: R$ ${item.precoUnitario.toFixed(2)}`
-                    : "Produto não encontrado"}
+                    ? `${produto.nome} - Quantidade: ${item.quantidade
+                    } - R$ ${item.precoUnitario.toFixed(2)}`
+                    : <></>}
                 </li>
               );
             })}
@@ -199,6 +184,7 @@ pedidoId number Chave estrangeira para a tabela Pedido (se aplicável)
           {edit ? "Atualizar" : "Cadastrar"}
         </button>
       </form>
+      
     </div>
   );
 };
