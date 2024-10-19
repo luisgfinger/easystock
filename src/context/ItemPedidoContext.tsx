@@ -1,11 +1,3 @@
-/*
-id number Chave primária
-pedidoId number Chave estrangeira para a tabela Pedido
-produtoId number Chave estrangeira para a tabela Produto
-quantidade number Quantidade do produto no pedido
-precoUnitario number Preço unitário do produto no pedido
-*/
-
 import React, { createContext, useState, ReactNode, useContext } from "react";
 
 interface ItemPedido {

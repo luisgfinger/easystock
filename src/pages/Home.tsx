@@ -15,9 +15,11 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import "../styles/home.css";
 import FormClientes from "../components/forms/FormClientes";
 import ClienteList from "../components/listas/ClienteList";
+import TransacaoList from "../components/listas/TransacaoList";
 import { ClienteProvider } from "../context/ClienteContext";
-import { useEffect, useState } from "react";
 import { ItemPedidoProvider } from "../context/ItemPedidoContext";
+import { TransacaoProvider } from "../context/TransacaoContext";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -31,6 +33,7 @@ export default function Home() {
   const [buscaContato, setBuscaContato] = useState("");
   const [buscaData, setBuscaData] = useState("");
   const [buscaStatus, setBuscaStatus] = useState("");
+  const [buscaTipo, setBuscaTipo] = useState("");
 
   const addProduto = () => {
     navigate("/produtos/cadastrar");
@@ -45,7 +48,11 @@ export default function Home() {
   };
 
   const addCliente = () => {
-    navigate("/clientes/cadastrar"); 
+    navigate("/clientes/cadastrar");
+  };
+
+  const addTransacao = () => {
+    navigate("/transacoes/cadastrar");
   };
 
   return (
@@ -74,6 +81,9 @@ export default function Home() {
             <li>
               <a href="/pedidos">Pedidos</a>
             </li>
+            <li>
+              <a href="/transacoes">Transações</a>
+            </li>
           </ul>
         </nav>
       </section>
@@ -83,210 +93,263 @@ export default function Home() {
           <ProdutoProvider>
             <PedidoProvider>
               <ItemPedidoProvider>
-              <div id="listas" className="flex-column">
-                <Routes>
-                  <Route
-                    path="/fornecedores"
-                    element={
-                      <>
-                        <div className="add-button">
-                          <Button text="Adicionar" onClick={addFornecedor} />
-                        </div>
-                        <form className="filtro-form flex-column">
-                          <label>Nome: </label>
-                          <input
-                            type="text"
-                            value={buscaNome}
-                            onChange={(e) => setBuscaNome(e.target.value)}
-                            placeholder="Insira o nome"
-                          />
-                          <label>Contato: </label>
-                          <input
-                            type="text"
-                            value={buscaContato}
-                            onChange={(e) => setBuscaContato(e.target.value)}
-                            placeholder="Insira o contato"
-                          />
-                        </form>
-                        <FornecedorList
-                          buscaNome={buscaNome}
-                          buscaContato={buscaContato}
-                        />
-                      </>
-                    }
-                  />
-                  <Route
-                    path="/fornecedores/cadastrar"
-                    element={<FormFornecedores edit={false} />}
-                  />
-                  <Route
-                    path="/fornecedores/editar/:id"
-                    element={<FormFornecedores edit={true} />}
-                  />
-                  <Route
-                    path="/fornecedores/deletar/:id"
-                    element={<Delete type="fornecedor" />}
-                  />
+                <TransacaoProvider>
+                  <div id="listas" className="flex-column">
+                    <Routes>
+                      <Route
+                        path="/fornecedores"
+                        element={
+                          <>
+                            <div className="add-button">
+                              <Button
+                                text="Adicionar"
+                                onClick={addFornecedor}
+                              />
+                            </div>
+                            <form className="filtro-form flex-column">
+                              <label>Nome: </label>
+                              <input
+                                type="text"
+                                value={buscaNome}
+                                onChange={(e) => setBuscaNome(e.target.value)}
+                                placeholder="Insira o nome"
+                              />
+                              <label>Contato: </label>
+                              <input
+                                type="text"
+                                value={buscaContato}
+                                onChange={(e) =>
+                                  setBuscaContato(e.target.value)
+                                }
+                                placeholder="Insira o contato"
+                              />
+                            </form>
+                            <FornecedorList
+                              buscaNome={buscaNome}
+                              buscaContato={buscaContato}
+                            />
+                          </>
+                        }
+                      />
+                      <Route
+                        path="/fornecedores/cadastrar"
+                        element={<FormFornecedores edit={false} />}
+                      />
+                      <Route
+                        path="/fornecedores/editar/:id"
+                        element={<FormFornecedores edit={true} />}
+                      />
+                      <Route
+                        path="/fornecedores/deletar/:id"
+                        element={<Delete type="fornecedor" />}
+                      />
 
-                  <Route
-                    path="/clientes"
-                    element={
-                      <>
-                        <div className="add-button">
-                          <Button text="Adicionar" onClick={addCliente} />
-                        </div>
-                        <form className="filtro-form flex-column">
-                          <label>Nome: </label>
-                          <input
-                            type="text"
-                            value={buscaNome}
-                            onChange={(e) => setBuscaNome(e.target.value)}
-                            placeholder="Insira o nome"
-                          />
-                          <label>CPF ou CNPJ: </label>
-                          <input
-                            type="text"
-                            value={buscaCpf_cnpj}
-                            onChange={(e) => setBuscaCpf_cnpj(e.target.value)}
-                            placeholder="Insira CPF ou CNPJ"
-                          />
-                        </form>
-                        <ClienteList
-                          buscaNome={buscaNome}
-                          buscaCpf_cnpj={buscaCpf_cnpj}
-                        />
-                      </>
-                    }
-                  />
-                  <Route
-                    path="/clientes/cadastrar"
-                    element={<FormClientes edit={false} />}
-                  />
-                  <Route
-                    path="/clientes/editar/:id"
-                    element={<FormClientes edit={true} />}
-                  />
-                  <Route
-                    path="/clientes/deletar/:id"
-                    element={<Delete type="cliente" />}
-                  />
+                      <Route
+                        path="/clientes"
+                        element={
+                          <>
+                            <div className="add-button">
+                              <Button text="Adicionar" onClick={addCliente} />
+                            </div>
+                            <form className="filtro-form flex-column">
+                              <label>Nome: </label>
+                              <input
+                                type="text"
+                                value={buscaNome}
+                                onChange={(e) => setBuscaNome(e.target.value)}
+                                placeholder="Insira o nome"
+                              />
+                              <label>CPF ou CNPJ: </label>
+                              <input
+                                type="text"
+                                value={buscaCpf_cnpj}
+                                onChange={(e) =>
+                                  setBuscaCpf_cnpj(e.target.value)
+                                }
+                                placeholder="Insira CPF ou CNPJ"
+                              />
+                            </form>
+                            <ClienteList
+                              buscaNome={buscaNome}
+                              buscaCpf_cnpj={buscaCpf_cnpj}
+                            />
+                          </>
+                        }
+                      />
+                      <Route
+                        path="/clientes/cadastrar"
+                        element={<FormClientes edit={false} />}
+                      />
+                      <Route
+                        path="/clientes/editar/:id"
+                        element={<FormClientes edit={true} />}
+                      />
+                      <Route
+                        path="/clientes/deletar/:id"
+                        element={<Delete type="cliente" />}
+                      />
 
-                  <Route
-                    path="/produtos"
-                    element={
-                      <>
-                        <div className="add-button">
-                          <Button text="Adicionar" onClick={addProduto} />
-                        </div>
-                        <form className="filtro-form flex-column">
-                          <label>Nome: </label>
-                          <input
-                            type="text"
-                            value={buscaNome}
-                            onChange={(e) => setBuscaNome(e.target.value)}
-                            placeholder="Insira o nome"
-                          />
-                          <label>Fornecedor: </label>
-                          <input
-                            type="text"
-                            value={buscaFornecedor}
-                            onChange={(e) => setBuscaFornecedor(e.target.value)}
-                            placeholder="Insira o fornecedor"
-                          />
-                          <label>Ordenar por preço: </label>
-                          <select
-                            value={ordenacao}
-                            onChange={(e) => setOrdenacao(e.target.value)}
-                          >
-                            <option value="crescente">Crescente</option>
-                            <option value="decrescente">Decrescente</option>
-                          </select>
-                        </form>
-                        <ProdutoList
-                          buscaNome={buscaNome}
-                          buscaFornecedor={buscaFornecedor}
-                          ordenacao={ordenacao}
-                        />
-                      </>
-                    }
-                  />
-                  <Route
-                    path="/produtos/cadastrar"
-                    element={<FormProduto edit={false} />}
-                  />
-                  <Route
-                    path="/produtos/editar/:id"
-                    element={<FormProduto edit={true} />}
-                  />
-                  <Route
-                    path="/produtos/deletar/:id"
-                    element={<Delete type="produto" />}
-                  />
+                      <Route
+                        path="/produtos"
+                        element={
+                          <>
+                            <div className="add-button">
+                              <Button text="Adicionar" onClick={addProduto} />
+                            </div>
+                            <form className="filtro-form flex-column">
+                              <label>Nome: </label>
+                              <input
+                                type="text"
+                                value={buscaNome}
+                                onChange={(e) => setBuscaNome(e.target.value)}
+                                placeholder="Insira o nome"
+                              />
+                              <label>Fornecedor: </label>
+                              <input
+                                type="text"
+                                value={buscaFornecedor}
+                                onChange={(e) =>
+                                  setBuscaFornecedor(e.target.value)
+                                }
+                                placeholder="Insira o fornecedor"
+                              />
+                              <label>Ordenar por preço: </label>
+                              <select
+                                value={ordenacao}
+                                onChange={(e) => setOrdenacao(e.target.value)}
+                              >
+                                <option value="crescente">Crescente</option>
+                                <option value="decrescente">Decrescente</option>
+                              </select>
+                            </form>
+                            <ProdutoList
+                              buscaNome={buscaNome}
+                              buscaFornecedor={buscaFornecedor}
+                              ordenacao={ordenacao}
+                            />
+                          </>
+                        }
+                      />
+                      <Route
+                        path="/produtos/cadastrar"
+                        element={<FormProduto edit={false} />}
+                      />
+                      <Route
+                        path="/produtos/editar/:id"
+                        element={<FormProduto edit={true} />}
+                      />
+                      <Route
+                        path="/produtos/deletar/:id"
+                        element={<Delete type="produto" />}
+                      />
 
-                  <Route
-                    path="/pedidos"
-                    element={
-                      <>
-                        <div className="add-button">
-                          <Button text="Adicionar" onClick={addPedido} />
-                        </div>
-                        <form className="filtro-form flex-column">
-                          <label>Data: </label>
-                          <input
-                            type="date"
-                            value={buscaData}
-                            onChange={(e) => setBuscaData(e.target.value)} 
-                          />
-                          <label>Status: </label>
-                          <select
-                            value={buscaStatus}
-                            onChange={(e) => setBuscaStatus(e.target.value)}
-                          >
-                            <option value="">Selecione um status</option>
-                            <option value="pendente">Pendente</option>
-                            <option value="concluido">Concluído</option>
-                          </select>
-                          <label>Ordenar por data: </label>
-                          <select
-                            value={ordenacaoData} 
-                            onChange={(e) => setOrdenacaoData(e.target.value)}
-                          >
-                            <option value="dataCrescente">Crescente</option>
-                            <option value="dataDescrescente">Decrescente</option>
-                          </select>
-                          <label>Ordenar por valor: </label>
-                          <select
-                            value={ordenacaoValor} 
-                            onChange={(e) => setOrdenacaoValor(e.target.value)}
-                          >
-                            <option value="valorCrescente">Crescente</option>
-                            <option value="valorDescrescente">Decrescente</option>
-                          </select>
-                        </form>
-                        <PedidoList
-                          buscaData={buscaData} 
-                          buscaStatus={buscaStatus} 
-                          ordenacaoData={ordenacaoData}
-                          ordenacaoValor={ordenacaoValor}
-                        />
-                      </>
-                    }
-                  />
+                      <Route
+                        path="/pedidos"
+                        element={
+                          <>
+                            <div className="add-button">
+                              <Button text="Adicionar" onClick={addPedido} />
+                            </div>
+                            <form className="filtro-form flex-column">
+                              <label>Data: </label>
+                              <input
+                                type="date"
+                                value={buscaData}
+                                onChange={(e) => setBuscaData(e.target.value)}
+                              />
+                              <label>Status: </label>
+                              <select
+                                value={buscaStatus}
+                                onChange={(e) => setBuscaStatus(e.target.value)}
+                              >
+                                <option value="">Selecione um status</option>
+                                <option value="pendente">Pendente</option>
+                                <option value="concluido">Concluído</option>
+                              </select>
+                              <label>Ordenar por data: </label>
+                              <select
+                                value={ordenacaoData}
+                                onChange={(e) =>
+                                  setOrdenacaoData(e.target.value)
+                                }
+                              >
+                                <option value="dataCrescente">Crescente</option>
+                                <option value="dataDescrescente">
+                                  Decrescente
+                                </option>
+                              </select>
+                              <label>Ordenar por valor: </label>
+                              <select
+                                value={ordenacaoValor}
+                                onChange={(e) =>
+                                  setOrdenacaoValor(e.target.value)
+                                }
+                              >
+                                <option value="valorCrescente">
+                                  Crescente
+                                </option>
+                                <option value="valorDescrescente">
+                                  Decrescente
+                                </option>
+                              </select>
+                            </form>
+                            <PedidoList
+                              buscaData={buscaData}
+                              buscaStatus={buscaStatus}
+                              ordenacaoData={ordenacaoData}
+                              ordenacaoValor={ordenacaoValor}
+                            />
+                          </>
+                        }
+                      />
 
-                  <Route
-                    path="/pedidos/cadastrar"
-                    element={<FormPedido edit={false} />}
-                  />
-                  <Route
-                    path="/pedidos/editar/:id"
-                    element={<FormPedido edit={true} />}
-                  />
-                  <Route
-                    path="/pedidos/deletar/:id"
-                    element={<Delete type="pedido" />}
-                  />
-                </Routes>
-              </div>
+                      <Route
+                        path="/transacoes"
+                        element={
+                          <>
+                            <div className="add-button">
+                              <Button text="Adicionar" onClick={addTransacao} />
+                            </div>
+                            <form className="filtro-form flex-column">
+                              <label>Data: </label>
+                              <input
+                                type="date"
+                                value={buscaData}
+                                onChange={(e) => setBuscaData(e.target.value)}
+                              />
+                              <label>Tipo: </label>
+                              <select
+                                value={buscaTipo}
+                                onChange={(e) => setBuscaTipo(e.target.value)}
+                              >
+                                <option value="">Selecione um tipo</option>
+                                <option value="entrada">Entrada</option>
+                                <option value="saida">Saída</option>
+                              </select>
+                            </form>
+                            <TransacaoList 
+                            buscaTipo={buscaTipo}
+                            buscaData={buscaData}
+                            />
+                          </>
+                        }
+                      />
+
+                      <Route
+                        path="/pedidos/cadastrar"
+                        element={<FormPedido edit={false} />}
+                      />
+                      <Route
+                        path="/pedidos/editar/:id"
+                        element={<FormPedido edit={true} />}
+                      />
+                      <Route
+                        path="/pedidos/deletar/:id"
+                        element={<Delete type="pedido" />}
+                      />
+                    </Routes>
+                  </div>
+                </TransacaoProvider>
               </ItemPedidoProvider>
             </PedidoProvider>
           </ProdutoProvider>

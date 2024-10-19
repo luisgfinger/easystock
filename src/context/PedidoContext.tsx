@@ -34,14 +34,14 @@ export const PedidoProvider: React.FC<{ children: ReactNode }> = ({
         data: new Date(),
         fornecedorId: 1,
         status: 'Pendente',
-        total: 10
+        total: 0
     },
     {
         id: 2,
         data: new Date(),
         fornecedorId: 1,
         status: 'Pendente',
-        total: 20
+        total: 0
     },
   ]);
 

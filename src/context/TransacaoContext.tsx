@@ -20,6 +20,7 @@ interface Transacao {
 
 interface TransacaoContextType {
   transacoes: Transacao[];
+  addTransacao: (novaTransacao: Transacao) => void;
 }
 
 const TransacaoContext = createContext<TransacaoContextType | undefined>(undefined);
@@ -27,7 +28,7 @@ const TransacaoContext = createContext<TransacaoContextType | undefined>(undefin
 export const TransacaoProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [transacoes] = useState<Transacao[]>([
+  const [transacoes, setTransacoes] = useState<Transacao[]>([
     {
         id: 1,
         data: new Date(),
@@ -37,17 +38,21 @@ export const TransacaoProvider: React.FC<{ children: ReactNode }> = ({
         pedidoId: 1
     },
     {
-        id: 1,
+        id: 2,
         data: new Date(),
-        tipo: 'Entrada',
+        tipo: 'Saída',
         valor: 20,
         produtoId: 2,
         pedidoId: 2
     },
   ]);
 
+  const addTransacao = (novaTrancacao: Transacao) => {
+    setTransacoes([...transacoes, novaTrancacao]);
+  };
+
   return (
-    <TransacaoContext.Provider value={{ transacoes }}>
+    <TransacaoContext.Provider value={{ transacoes, addTransacao }}>
       {children}
     </TransacaoContext.Provider>
   );
