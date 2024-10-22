@@ -1,0 +1,26 @@
+.form-page{
+    align-self: center;
+}
+
+
+h3{
+    font-weight: 700;
+    text-align: center;
+}
+
+.submit-button{
+    margin-top: 1rem;
+    align-self: center;
+    width: 6.5rem;
+    height: 2rem;
+    background-color: var(--primary-color);
+    color: var(--bg-color);
+    border-radius: 5px;
+    font-weight: 600;
+}
+
+.submit-button:hover{
+    color: var(--primary-color);
+    background-color: var(--bg-color);
+    border: 1px solid;
+}

@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Poppins;
+}
+
+:root{
+    --bg-color: #F5F5F5;
+    --primary-color: #007BFF;
+    --text-color: #000000;
+    --sucess-color: #28A745;
+    --failed-color: red;
+}
+
+html, body{
+    height: 100%;
+    background-color: var(--primary-color);
+}
+
+body{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+ul{
+    list-style: none;
+    text-decoration: none;
+}
+
+a{
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+
+
+
+
+
