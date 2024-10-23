@@ -12,6 +12,8 @@ import { useProduto } from "../../context/ProdutoContext";
 import { useTransacao } from "../../context/TransacaoContext";
 
 import React from "react";
+import Button from "../Ui/Button";
+import { useNavigate } from "react-router-dom";
 
 interface TransacaoListProps{
   buscaTipo?: string;
@@ -22,6 +24,11 @@ const TransacaoList: React.FC<TransacaoListProps> = ({buscaTipo, buscaData}) => 
   const { transacoes } = useTransacao();
   const { pedidos } = usePedido();
   const {produtos} = useProduto();
+  const navigate = useNavigate();
+
+  const deleteTransacao = (id: number) => {
+    navigate(`/transacoes/deletar/${id}`);
+  };
 
   const formatarData = (isoDate: string) => {
     const date = new Date(isoDate);
@@ -62,7 +69,7 @@ const TransacaoList: React.FC<TransacaoListProps> = ({buscaTipo, buscaData}) => 
               <ul className="inside">
                 <li>Data: {formatarData(transacao.data.toISOString())}</li>
                 <li>Tipo: {transacao.tipo}</li>
-                <li>Valor: {transacao.valor}</li>
+                <li>Valor: R${transacao.valor},00</li>
                 <li>
                   {pedido ? (
                     <p>Pedido: {pedido.id}</p>
@@ -72,13 +79,22 @@ const TransacaoList: React.FC<TransacaoListProps> = ({buscaTipo, buscaData}) => 
                 </li>
                 <li>
                   {produto ? (
-                    <p>Produto: {produto.id}</p>
+                    <h3>Produto: {produto.id}</h3>
                   ) : (
                     <p>Produto não encontrado</p>
                   )}
                 </li>
+                <div className="delete-edit-button flex-column">
+                  <span className="delete-button">
+                    <Button
+                      text="Excluir"
+                      onClick={() => deleteTransacao(transacao.id)}
+                    />
+                  </span>
+                </div>
               </ul>
             </li>
+            
           );
         })
       ) : (

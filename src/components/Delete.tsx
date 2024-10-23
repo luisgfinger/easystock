@@ -4,6 +4,7 @@ import { usePedido } from "../context/PedidoContext";
 import { useProduto } from "../context/ProdutoContext";
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTransacao } from "../context/TransacaoContext";
 
 interface DeleteProps {
   type: string;
@@ -15,42 +16,47 @@ export default function Delete({ type }: DeleteProps) {
   const { fornecedores, deleteFornecedor } = useFornecedor();
   const { pedidos, deletePedido } = usePedido();
   const { clientes, deleteCliente } = useCliente();
+  const { transacoes, deleteTransacao } = useTransacao();
 
   const navigate = useNavigate();
 
-  if (type === "produto") {
-    useEffect(() => {
-      const produto = produtos.find((p) => p.id === Number(id));
-      if (produto) {
-        deleteProduto(produto.id);
-        navigate("/produtos");
+  useEffect(() => {
+    const deleteEntity = async () => {
+      if (type === "produto") {
+        const produto = produtos.find((p) => p.id === Number(id));
+        if (produto) {
+          await deleteProduto(produto.id);
+          navigate("/produtos");
+        }
+      } else if (type === "fornecedor") {
+        const fornecedor = fornecedores.find((p) => p.id === Number(id));
+        if (fornecedor) {
+          await deleteFornecedor(fornecedor.id);
+          navigate("/fornecedores");
+        }
+      } else if (type === "pedido") {
+        const pedido = pedidos.find((p) => p.id === Number(id));
+        if (pedido) {
+          await deletePedido(pedido.id);
+          navigate("/pedidos");
+        }
+      } else if (type === "cliente") {
+        const cliente = clientes.find((p) => p.id === Number(id));
+        if (cliente) {
+          await deleteCliente(cliente.id);
+          navigate("/clientes");
+        }
+      } else if (type === "transacao") {
+        const transacao = transacoes.find((p) => p.id === Number(id));
+        if (transacao) {
+          await deleteTransacao(transacao.id);
+          navigate("/transacoes");
+        }
       }
-    }, [id, produtos, deleteProduto, navigate]);
-  } else if (type === "fornecedor") {
-    useEffect(() => {
-      const fornecedor = fornecedores.find((p) => p.id === Number(id));
-      if (fornecedor) {
-        deleteFornecedor(fornecedor.id);
-        navigate("/fornecedores");
-      }
-    }, [id, fornecedores, deleteFornecedor, navigate]);
-  } else if (type === "pedido") {
-    useEffect(() => {
-      const pedido = pedidos.find((p) => p.id === Number(id));
-      if (pedido) {
-        deletePedido(pedido.id);
-        navigate("/pedidos");
-      }
-    }, [id, fornecedores, deleteFornecedor, navigate]);
-  } else if (type === "cliente") {
-    useEffect(() => {
-      const cliente = clientes.find((p) => p.id === Number(id));
-      if (cliente) {
-        deleteCliente(cliente.id);
-        navigate("/clientes");
-      }
-    }, [id, fornecedores, deleteFornecedor, navigate]);
-  }
+    };
 
-  return <h1>Excluindo produto...</h1>;
+    deleteEntity();
+  }, [id, produtos, fornecedores, pedidos, clientes, transacoes, deleteProduto, deleteFornecedor, deletePedido, deleteCliente, deleteTransacao, navigate, type]);
+
+  return <h1>Excluindo...</h1>;
 }

@@ -84,7 +84,7 @@ const PedidoList: React.FC<PedidoListProps> = ({ buscaData, buscaStatus, ordenac
                   {fornecedor ? (
                     <p>Fornecedor: {fornecedor.nome}</p>
                   ) : (
-                    <p>Fornecedor não encontrado</p>
+                    <></>
                   )}
                 </li>
                 <li>Status: {pedido.status}</li>
@@ -96,7 +96,12 @@ const PedidoList: React.FC<PedidoListProps> = ({ buscaData, buscaStatus, ordenac
                         return (
                           <li key={item.id}>
                             {produto ? (
-                              `${produto.nome} - Quantidade: ${item.quantidade} - Preço Unitário: R$ ${item.precoUnitario.toFixed(2)}`
+                              <ul>
+                                <li><h3>{produto.nome}</h3></li>
+                                <li>Valor: R${item.precoUnitario},00</li>
+                                <li>Quantidade: {item.quantidade}</li>
+                                <li>Total: R${item.quantidade*item.precoUnitario},00</li>
+                              </ul>
                             ) : (
                               "Produto não encontrado"
                             )}
@@ -108,7 +113,7 @@ const PedidoList: React.FC<PedidoListProps> = ({ buscaData, buscaStatus, ordenac
                     <h3>Sem itens</h3>
                   )}
                 </li>
-                <li>Total: R$ {totalPedido.toFixed(2)},00</li>
+                <li><h3>Total pedido: R$ {totalPedido},00</h3></li>
                 <div className="delete-edit-button flex-column">
                   <Button
                     text="Editar pedido"

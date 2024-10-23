@@ -13,26 +13,36 @@ interface FormProps {
 
 const FormPedido: React.FC<FormProps> = ({ edit }) => {
   const { pedidos, addPedido, updatePedido } = usePedido();
+  const { transacoes, addTransacao } = useTransacao();
   const { fornecedores } = useFornecedor();
-  const { addTransacao } = useTransacao();
   const { produtos } = useProduto();
-  const { addItemPedido } = useItemPedido();
+  const { itemPedidos, addItemPedido } = useItemPedido();
   const [fornecedorId, setFornecedorId] = useState(0);
   const [status, setStatus] = useState("");
   const [total, setTotal] = useState(0);
   const [idProduto, setIdProduto] = useState(0);
   const [quantidade, setQuantidade] = useState(0);
   const [precoUnit, setPrecoUnit] = useState(0);
-  const [itensTemp, setItensTemp] = useState<any[]>([]);
 
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
+
+  const [id, setId] = useState(0);
+  const { id: paramId } = useParams<{ id: string }>();
+
+  useEffect(() => {
+    if (edit) {
+      setId(Number(paramId));
+    } else {
+      setId(Math.random());
+    }
+  }, [edit, paramId]);
+
 
   useEffect(() => {
     if (edit && id) {
       const pedido = pedidos.find((p) => p.id === Number(id));
       if (pedido) {
-        setFornecedorId(pedido.fornecedorId);
+        setFornecedorId(0);
         setStatus(pedido.status);
         setTotal(pedido.total);
       }
@@ -41,16 +51,27 @@ const FormPedido: React.FC<FormProps> = ({ edit }) => {
 
   const handleAddItem = (e: React.FormEvent) => {
     e.preventDefault();
+
     const novoItemPedido = {
       id: Math.random(),
-      pedidoId: pedido.id,
+      pedidoId: id,
       produtoId: idProduto,
       quantidade,
       precoUnitario: precoUnit,
     };
 
-    setItensTemp((prevItens) => [...prevItens, novoItemPedido]);
+    const novaTransacao = {
+      id: Math.random(),
+      data: new Date(),
+      tipo: 'saida',
+      valor: precoUnit * quantidade,
+      produtoId: idProduto,
+      pedidoId: id
 
+    }
+
+    addItemPedido(novoItemPedido);
+    addTransacao(novaTransacao);
     setIdProduto(0);
     setQuantidade(0);
     setPrecoUnit(0);
@@ -73,19 +94,6 @@ const FormPedido: React.FC<FormProps> = ({ edit }) => {
       addPedido(novoPedido);
     }
 
-    itensTemp.forEach((item) => {
-      addItemPedido(item);
-      const novaTransacao = {
-        id: Math.random(),
-        data: new Date(),
-        tipo: 'saida',
-        valor: item.quantidade * item.precoUnitario,
-        produtoId: item.produtoId,
-        pedidoId: novoPedido.id,
-      };
-      addTransacao(novaTransacao);
-    });
-
     navigate("/pedidos");
   };
 
@@ -93,19 +101,6 @@ const FormPedido: React.FC<FormProps> = ({ edit }) => {
     <div className="form-page flex-column">
       <h3>{edit ? "Editar Pedido" : "Cadastro de Pedido"}</h3>
       <form onSubmit={handleSubmitPedido} className="flex-column">
-        <label>Fornecedor:</label>
-        <select
-          value={fornecedorId}
-          onChange={(e) => setFornecedorId(Number(e.target.value))}
-          required
-        >
-          <option value="">Selecione um fornecedor</option>
-          {fornecedores.map((fornecedor) => (
-            <option key={fornecedor.id} value={fornecedor.id}>
-              {fornecedor.nome}
-            </option>
-          ))}
-        </select>
         <label>Status:</label>
         <select
           value={status}
@@ -114,7 +109,6 @@ const FormPedido: React.FC<FormProps> = ({ edit }) => {
           <option value="">Selecione um estado</option>
           <option value={"pendente"}>Pendente</option>
           <option value={"concluído"}>Concluído</option>
-
         </select>
 
         <h4>Adicionar Itens ao Pedido</h4>
@@ -140,7 +134,7 @@ const FormPedido: React.FC<FormProps> = ({ edit }) => {
                 </option>
               ))}
             </select>
-            
+
             <label>Quantidade</label>
             <input
               type="number"
@@ -155,36 +149,40 @@ const FormPedido: React.FC<FormProps> = ({ edit }) => {
             )}
 
             <button className="submit-button" onClick={handleAddItem}>
-              Adicionar Item
+              Adicionar
             </button>
           </>
         ) : (
           <h3>Sem produtos</h3>
         )}
 
-        {itensTemp.length > 0 ? (
+        {itemPedidos.length > 0 ? (
           <ul className="itens">
-            {itensTemp.map((item) => {
-              const produto = produtos.find((p) => p.id === item.produtoId);
-              return (
-                <li key={item.id}>
-                  {produto
-                    ? `${produto.nome} - Quantidade: ${item.quantidade
-                    } - R$ ${item.precoUnitario.toFixed(2)}`
-                    : <></>}
-                </li>
-              );
-            })}
+            {itemPedidos
+              .filter((item) => item.pedidoId === id)
+              .map((item) => {
+                const produto = produtos.find((p) => p.id === item.produtoId);
+                return (
+                  <li key={item.id}>
+                    {produto ? (
+                      <p>
+                        {produto.nome} - Quant: {item.quantidade} - Valor: R${item.precoUnitario},00
+                      </p>
+                    ) : (
+                      <p>Produto não encontrado</p>
+                    )}
+                  </li>
+                );
+              })}
           </ul>
         ) : (
-          <h3>Sem itens</h3>
+          <h3>Sem itens no pedido</h3>
         )}
 
         <button className="submit-button" type="submit">
           {edit ? "Atualizar" : "Cadastrar"}
         </button>
       </form>
-      
     </div>
   );
 };

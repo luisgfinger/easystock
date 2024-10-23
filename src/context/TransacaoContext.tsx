@@ -21,6 +21,9 @@ interface Transacao {
 interface TransacaoContextType {
   transacoes: Transacao[];
   addTransacao: (novaTransacao: Transacao) => void;
+  updateTransacao: (TransacaoAtualizada: Transacao) => void;
+  deleteTransacao: (id: number) => void;
+  
 }
 
 const TransacaoContext = createContext<TransacaoContextType | undefined>(undefined);
@@ -28,31 +31,28 @@ const TransacaoContext = createContext<TransacaoContextType | undefined>(undefin
 export const TransacaoProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [transacoes, setTransacoes] = useState<Transacao[]>([
-    {
-        id: 1,
-        data: new Date(),
-        tipo: 'entrada',
-        valor: 10,
-        produtoId: 1,
-        pedidoId: 1
-    },
-    {
-        id: 2,
-        data: new Date(),
-        tipo: 'saida',
-        valor: 20,
-        produtoId: 2,
-        pedidoId: 2
-    },
-  ]);
+  const [transacoes, setTransacoes] = useState<Transacao[]>([]);
 
   const addTransacao = (novaTrancacao: Transacao) => {
     setTransacoes([...transacoes, novaTrancacao]);
   };
 
+  const updateTransacao = (TransacaoAtualizada: Transacao) => {
+    setTransacoes((newTransacao) =>
+      newTransacao.map((transacoes) =>
+        transacoes.id === TransacaoAtualizada.id ? TransacaoAtualizada : transacoes
+      )
+    );
+  };
+
+  const deleteTransacao = (id: number) => {
+    setTransacoes((currentTransacoes) =>
+      currentTransacoes.filter((transacao) => transacao.id !== id)
+    );
+  };
+
   return (
-    <TransacaoContext.Provider value={{ transacoes, addTransacao }}>
+    <TransacaoContext.Provider value={{ transacoes, addTransacao, updateTransacao, deleteTransacao }}>
       {children}
     </TransacaoContext.Provider>
   );

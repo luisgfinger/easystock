@@ -20,6 +20,7 @@ import { ClienteProvider } from "../context/ClienteContext";
 import { ItemPedidoProvider } from "../context/ItemPedidoContext";
 import { TransacaoProvider } from "../context/TransacaoContext";
 import { useEffect, useState } from "react";
+import FormTransacoes from "../components/forms/FormTransacoes";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -304,11 +305,24 @@ export default function Home() {
                       />
 
                       <Route
+                        path="/pedidos/cadastrar"
+                        element={<FormPedido edit={false} />}
+                      />
+                      <Route
+                        path="/pedidos/editar/:id"
+                        element={<FormPedido edit={true} />}
+                      />
+                      <Route
+                        path="/pedidos/deletar/:id"
+                        element={<Delete type="pedido" />}
+                      />
+
+                      <Route
                         path="/transacoes"
                         element={
                           <>
                             <div className="add-button">
-                              <Button text="Adicionar" onClick={addTransacao} />
+                              <Button text="Adicionar entrada" onClick={addTransacao} />
                             </div>
                             <form className="filtro-form flex-column">
                               <label>Data: </label>
@@ -327,26 +341,28 @@ export default function Home() {
                                 <option value="saida">Saída</option>
                               </select>
                             </form>
-                            <TransacaoList 
-                            buscaTipo={buscaTipo}
-                            buscaData={buscaData}
+                            <TransacaoList
+                              buscaTipo={buscaTipo}
+                              buscaData={buscaData}
                             />
                           </>
                         }
                       />
 
                       <Route
-                        path="/pedidos/cadastrar"
-                        element={<FormPedido edit={false} />}
+                        path="/transacoes/cadastrar"
+                        element={<FormTransacoes edit={false} />}
                       />
                       <Route
-                        path="/pedidos/editar/:id"
-                        element={<FormPedido edit={true} />}
+                        path="/transacoes/editar/:id"
+                        element={<FormTransacoes edit={true} />}
                       />
                       <Route
-                        path="/pedidos/deletar/:id"
-                        element={<Delete type="pedido" />}
+                        path="/transacoes/deletar/:id"
+                        element={<Delete type="transacao" />}
                       />
+
+
                     </Routes>
                   </div>
                 </TransacaoProvider>
