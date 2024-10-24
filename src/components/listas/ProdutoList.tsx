@@ -68,7 +68,7 @@ const ProdutoList: React.FC<ProdutoListProps> = ({ buscaNome, buscaFornecedor, o
                   <h3>R${produto.preco},00</h3>
                 </li>
                 <li>
-                  <p>Quantidade: {produto.quantidade}</p>
+                  <p>Estoque: {produto.quantidade}</p>
                 </li>
                 <li>
                   {fornecedor ? (

@@ -3,6 +3,7 @@ import { useProduto } from "../../context/ProdutoContext";
 import { useNavigate, useParams } from "react-router-dom";
 
 import '../../styles/form.css';
+import { useFornecedor } from "../../context/FornecedorContext";
 
 interface FormProps {
   edit: boolean;
@@ -10,6 +11,7 @@ interface FormProps {
 
 const FormProduto: React.FC<FormProps> = ({ edit }) => {
   const { produtos, addProduto, updateProduto } = useProduto();
+  const { fornecedores } = useFornecedor();
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
   const [preco, setPreco] = useState(0);
@@ -38,7 +40,7 @@ const FormProduto: React.FC<FormProps> = ({ edit }) => {
     e.preventDefault();
 
     const novoProduto = {
-      id: id ? Number(id) : Math.random(), 
+      id: id ? Number(id) : Math.random(),
       nome,
       descricao,
       preco,
@@ -48,9 +50,9 @@ const FormProduto: React.FC<FormProps> = ({ edit }) => {
     };
 
     if (edit && id) {
-      updateProduto(novoProduto); 
+      updateProduto(novoProduto);
     } else {
-      addProduto(novoProduto); 
+      addProduto(novoProduto);
     }
 
     navigate("/produtos");
@@ -67,7 +69,7 @@ const FormProduto: React.FC<FormProps> = ({ edit }) => {
           onChange={(e) => setNome(e.target.value)}
           required
         />
-        <br />
+
         <label>Descrição:</label>
         <input
           type="text"
@@ -75,7 +77,7 @@ const FormProduto: React.FC<FormProps> = ({ edit }) => {
           onChange={(e) => setDescricao(e.target.value)}
           required
         />
-        <br />
+
         <label>Preço:</label>
         <input
           type="number"
@@ -83,7 +85,7 @@ const FormProduto: React.FC<FormProps> = ({ edit }) => {
           onChange={(e) => setPreco(Number(e.target.value))}
           required
         />
-        <br />
+
         <label>Quantidade:</label>
         <input
           type="number"
@@ -91,7 +93,7 @@ const FormProduto: React.FC<FormProps> = ({ edit }) => {
           onChange={(e) => setQuantidade(Number(e.target.value))}
           required
         />
-        <br />
+
         <label>Imagem (URL):</label>
         <input
           type="text"
@@ -99,15 +101,21 @@ const FormProduto: React.FC<FormProps> = ({ edit }) => {
           onChange={(e) => setImagem(e.target.value)}
           required
         />
-        <br />
-        <label>Fornecedor ID:</label>
-        <input
-          type="number"
+
+        <label>Fornecedor:</label>
+        <select
           value={fornecedorId}
           onChange={(e) => setFornecedorId(Number(e.target.value))}
-          required
-        />
-        <br />
+        >
+          <option value="">Selecione um fornecedor</option>
+          {fornecedores.map((fornecedor) => {
+            return (
+              <option key={fornecedor?.id} value={fornecedor.id}>{fornecedor.nome}</option>
+            )
+          })}
+
+        </select>
+
         <button className="submit-button" type="submit">{edit ? "Atualizar" : "Cadastrar"}</button>
       </form>
     </div>
