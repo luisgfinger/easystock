@@ -95,6 +95,19 @@ db.run(`
     );
     `);
 
+    db.run(`
+      CREATE TABLE IF NOT EXISTS transacao(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      data DATE,
+      tipo TEXT,
+      valor FLOAT,
+      produtoId INTEGER,
+      pedidoId INTEGER,
+      FOREIGN KEY(produtoId) REFERENCES produto(id),
+      FOREIGN KEY (pedidoId) REFERENCES pedido(id)
+      );
+      `);
+
 app.get("/api/fornecedor", (req, res) => {
   db.all("SELECT * FROM fornecedor", [], (err, rows) => {
     if (err) {
@@ -387,6 +400,58 @@ app.delete("/api/itempedido/:id", (req, res) => {
   });
 });
 
+app.get("/api/transacao", (req, res) => {
+  db.all("SELECT * FROM transacao", [], (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json(rows);
+  });
+});
+
+app.post("/api/transacao", (req, res) => {
+  const { data, tipo, valor, produtoId, pedidoId } = req.body;
+  db.run(
+    "INSERT INTO transacao (data, tipo, valor, produtoId, pedidoId) VALUES (?, ?, ?, ?, ?)",
+    [data, tipo, valor, produtoId, pedidoId],
+    function (err) {
+      if (err) {
+        console.error("Erro ao inserir transacao:", err);
+        res.status(500).json({ error: err.message });
+        return;
+      }
+      res.json({ id: this.lastID });
+    }
+  );
+});
+
+app.put("/api/transacao/:id", (req, res) => {
+  const { id } = req.params;
+  const { data, tipo, valor, produtoId, pedidoId} = req.body;
+  db.run(
+    "UPDATE transacao SET data = ?, tipo = ?, valor = ?, produtoId = ?, pedidoId = ? WHERE id = ?",
+    [data, tipo, valor, produtoId, pedidoId, id],
+    function (err) {
+      if (err) {
+        res.status(500).json({ error: err.message });
+        return;
+      }
+      res.json({ updatedRows: this.changes });
+    }
+  );
+});
+
+app.delete("/api/transacao/:id", (req, res) => {
+  const { id } = req.params;
+  db.run("DELETE FROM transacao WHERE id = ?", id, function (err) {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json({ deletedRows: this.changes });
+  });
+});
 
 
 app.listen(port, () => {

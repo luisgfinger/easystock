@@ -15,4 +15,8 @@ db.run("DROP TABLE IF EXISTS pedido", (err) => {
       console.log("Tabela 'fornecedor' excluída com sucesso.");
     }
   });
+
+db.run("DROP TABLE IF EXISTS itemPedido");
+
+db.run("DROP TABLE IF EXISTS transacao");
   
