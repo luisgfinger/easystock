@@ -1,4 +1,5 @@
-import React, { createContext, useState, ReactNode, useContext } from "react";
+import React, { createContext, useState, ReactNode, useContext, useEffect } from 'react';
+import axios from 'axios';
 
 interface Produto {
   id: number;
@@ -12,53 +13,56 @@ interface Produto {
 
 interface ProdutoContextType {
   produtos: Produto[];
-  addProduto: (novoProduto: Produto) => void;
-  updateProduto: (produtoAtualizado: Produto) => void; 
+  addProduto: (novoProduto: Omit<Produto, 'id'>) => void;
+  updateProduto: (produtoAtualizado: Produto) => void;
   deleteProduto: (id: number) => void;
 }
 
 const ProdutoContext = createContext<ProdutoContextType | undefined>(undefined);
 
-export const ProdutoProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
-  const [produtos, setProdutos] = useState<Produto[]>([
-    {
-      id: 1,
-      nome: "Produto 1",
-      descricao: "Descricao 1",
-      preco: 1,
-      quantidade: 1,
-      imagem: "/assets/products/caixa.png",
-      fornecedorId: 1,
-    },
-    {
-      id: 2,
-      nome: "Produto 2",
-      descricao: "Descricao 2",
-      preco: 2,
-      quantidade: 2,
-      imagem: "/assets/products/caixa.png",
-      fornecedorId: 1,
-    },
-  ]);
+export const ProdutoProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [produtos, setProdutos] = useState<Produto[]>([]);
 
-  const addProduto = (novoProduto: Produto) => {
-    setProdutos([...produtos, novoProduto]);
+  useEffect(() => {
+    axios.get('http://localhost:3001/api/produto')
+      .then(response => setProdutos(response.data))
+      .catch(error => console.error('Erro ao buscar produtos:', error));
+  }, []);
+
+  const addProduto = async (novoProduto: Omit<Produto, 'id'>) => {
+    try {
+      const response = await axios.post('http://localhost:3001/api/produto', novoProduto);
+      setProdutos(prevProdutos => [
+        ...prevProdutos,
+        { ...novoProduto, id: response.data.id },
+      ]);
+    } catch (error) {
+      console.error('Erro ao adicionar produto:', error);
+    }
   };
 
-  const updateProduto = (produtoAtualizado: Produto) => {
-    setProdutos((newProdutos) =>
-      newProdutos.map((produto) =>
-        produto.id === produtoAtualizado.id ? produtoAtualizado : produto
-      )
-    );
+  const updateProduto = async (produtoAtualizado: Produto) => {
+    try {
+      await axios.put(`http://localhost:3001/api/produto/${produtoAtualizado.id}`, produtoAtualizado);
+      setProdutos(prevProdutos =>
+        prevProdutos.map(produto =>
+          produto.id === produtoAtualizado.id ? produtoAtualizado : produto
+        )
+      );
+    } catch (error) {
+      console.error('Erro ao atualizar produto:', error);
+    }
   };
 
-  const deleteProduto = (id: number) => {
-    setProdutos((currentProdutos) =>
-      currentProdutos.filter((produto) => produto.id !== id)
-    );
+  const deleteProduto = async (id: number) => {
+    try {
+      await axios.delete(`http://localhost:3001/api/produto/${id}`);
+      setProdutos(prevProdutos =>
+        prevProdutos.filter(produto => produto.id !== id)
+      );
+    } catch (error) {
+      console.error('Erro ao excluir produto:', error);
+    }
   };
 
   return (

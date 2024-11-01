@@ -61,6 +61,8 @@ const TransacaoList: React.FC<TransacaoListProps> = ({buscaTipo, buscaData}) => 
       {transacoesFiltradas.length > 0 ? (
         transacoesFiltradas.map((transacao) => {
 
+          transacao.data = new Date(transacao.data)
+
             const pedido = pedidos.find((f) => f.id === transacao.pedidoId);
             const produto = produtos.find((f) => f.id === transacao.produtoId);
           return (

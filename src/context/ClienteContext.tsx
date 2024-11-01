@@ -1,4 +1,5 @@
-import React, { createContext, useState, ReactNode, useContext} from 'react';
+import React, { createContext, useState, ReactNode, useContext, useEffect } from 'react';
+import axios from 'axios';
 
 interface Cliente {
   id: number;
@@ -9,40 +10,61 @@ interface Cliente {
 }
 
 interface ClienteContextType {
-  clientes: Cliente[]; 
-  addCliente: (novoCliente: Cliente) => void;
-  updateCliente: (ClienteAtualizado: Cliente) => void; 
+  clientes: Cliente[];
+  addCliente: (novoCliente: Omit<Cliente, 'id'>) => void;
+  updateCliente: (clienteAtualizado: Cliente) => void;
   deleteCliente: (id: number) => void;
 }
 
 const ClienteContext = createContext<ClienteContextType | undefined>(undefined);
 
 export const ClienteProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [clientes, setClientes] = useState<Cliente[]>([
-    { id: 1, nome: 'Cliente 1', cpf_cnpj: 'CPF_CNPJ 1', contato: 'Contato 1', endereco: 'Endereço 1' },
-    { id: 2, nome: 'Cliente 2', cpf_cnpj: 'CPF_CNPJ 2', contato: 'Contato 2', endereco: 'Endereço 2' },
-  ]);
+  const [clientes, setClientes] = useState<Cliente[]>([]);
 
-  const addCliente = (novoCliente: Cliente) => {
-    setClientes([...clientes, novoCliente]);
+  useEffect(() => {
+    axios.get('http://localhost:3001/api/Cliente')
+      .then(response => setClientes(response.data))
+      .catch(error => console.error('Erro ao buscar clientes:', error));
+  }, []);
+
+  const addCliente = async (novoCliente: Omit<Cliente, 'id'>) => {
+    try {
+      const response = await axios.post('http://localhost:3001/api/cliente', novoCliente);
+      setClientes(prevClientes => [
+        ...prevClientes,
+        { ...novoCliente, id: response.data.id },
+      ]);
+    } catch (error) {
+      console.error('Erro ao adicionar cliente:', error);
+    }
   };
 
-   const updateCliente = (ClienteAtualizado: Cliente) => {
-    setClientes((newCliente) =>
-      newCliente.map((clientes) =>
-        clientes.id === ClienteAtualizado.id ? ClienteAtualizado : clientes
-      )
-    );
+  const updateCliente = async (clienteAtualizado: Cliente) => {
+    try {
+      await axios.put(`http://localhost:3001/api/cliente/${clienteAtualizado.id}`, clienteAtualizado);
+      setClientes(prevClientes =>
+        prevClientes.map(cliente =>
+          cliente.id === clienteAtualizado.id ? clienteAtualizado : cliente
+        )
+      );
+    } catch (error) {
+      console.error('Erro ao atualizar cliente:', error);
+    }
   };
 
-  const deleteCliente = (id: number) => {
-    setClientes((currentClientes) =>
-      currentClientes.filter((clientes) => clientes.id !== id)
-    );
+  const deleteCliente = async (id: number) => {
+    try {
+      await axios.delete(`http://localhost:3001/api/cliente/${id}`);
+      setClientes(prevClientes =>
+        prevClientes.filter(cliente => cliente.id !== id)
+      );
+    } catch (error) {
+      console.error('Erro ao excluir cliente:', error);
+    }
   };
 
   return (
-    <ClienteContext.Provider value={{clientes, addCliente, updateCliente, deleteCliente}}>
+    <ClienteContext.Provider value={{ clientes, addCliente, updateCliente, deleteCliente }}>
       {children}
     </ClienteContext.Provider>
   );

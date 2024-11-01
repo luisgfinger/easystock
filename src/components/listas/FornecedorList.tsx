@@ -1,8 +1,3 @@
-/*id number Chave primária
-nome string Nome do fornecedor
-contato string Informações de contato
-endereco string Endereço do fornecedor
-*/
 
 import { useFornecedor } from "../../context/FornecedorContext";
 import Button from "../Ui/Button";
@@ -50,6 +45,7 @@ const FornecedorList: React.FC<FornecedorListProps> = ({ buscaNome, buscaContato
               </li>
               <li><p>{fornecedor.contato}</p></li>
               <li><p>{fornecedor.endereco}</p></li>
+              <li>{fornecedor.cnpj}</li>
               <div className="delete-edit-button flex-column">
                 <Button
                   text="Editar fornecedor"

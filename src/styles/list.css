@@ -19,6 +19,10 @@
   font-weight: 700;
 }
 
+.inside img{
+  border-radius: 5px;
+}
+
 .delete-edit-button {
   margin-top: 0.5rem;
   gap: 0.5rem;

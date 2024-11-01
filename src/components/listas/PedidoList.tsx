@@ -66,6 +66,7 @@ const PedidoList: React.FC<PedidoListProps> = ({ buscaData, buscaStatus, ordenac
     <ul className="content">
       {pedidosFiltrados.length > 0 ? (
         pedidosFiltrados.map((pedido) => {
+          pedido.data = new Date(pedido.data)
           const fornecedor = fornecedores.find((f) => f.id === pedido.fornecedorId);
 
           const itensPedido = itemPedidos.filter(item => item.pedidoId === pedido.id);
@@ -78,7 +79,7 @@ const PedidoList: React.FC<PedidoListProps> = ({ buscaData, buscaStatus, ordenac
           return (
             <li key={pedido.id}>
               <ul className="inside flex-column">
-                <h3>Pedido: {pedido.id}</h3>
+                <h3>Id: {pedido.id}</h3>
                 <li>Data: {formatarData(pedido.data.toISOString())}</li>
                 <li>
                   {fornecedor ? (
@@ -98,6 +99,7 @@ const PedidoList: React.FC<PedidoListProps> = ({ buscaData, buscaStatus, ordenac
                             {produto ? (
                               <ul>
                                 <li><h3>{produto.nome}</h3></li>
+                                <li>pedidoId: {item.pedidoId}</li>
                                 <li>Valor: R${item.precoUnitario},00</li>
                                 <li>Quantidade: {item.quantidade}</li>
                                 <li>Total: R${item.quantidade*item.precoUnitario},00</li>

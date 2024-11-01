@@ -1,4 +1,5 @@
-import React, { createContext, useState, ReactNode, useContext } from "react";
+import React, { createContext, useState, ReactNode, useContext, useEffect } from 'react';
+import axios from 'axios';
 
 interface ItemPedido {
   id: number;
@@ -10,34 +11,56 @@ interface ItemPedido {
 
 interface ItemPedidoContextType {
   itemPedidos: ItemPedido[];
-  addItemPedido: (novoPedido: ItemPedido) => void;
+  addItemPedido: (novoItemPedido: Omit<ItemPedido, 'id'>) => void;
   updateItemPedido: (itemPedidoAtualizado: ItemPedido) => void;
   deleteItemPedido: (id: number) => void;
 }
 
 const ItemPedidoContext = createContext<ItemPedidoContextType | undefined>(undefined);
 
-export const ItemPedidoProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
+export const ItemPedidoProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [itemPedidos, setItemPedidos] = useState<ItemPedido[]>([]);
 
-  const addItemPedido = (novoItemPedido: ItemPedido) => {
-    setItemPedidos([...itemPedidos, novoItemPedido]);
+  useEffect(() => {
+    axios.get('http://localhost:3001/api/itempedido')
+      .then(response => setItemPedidos(response.data))
+      .catch(error => console.error('Erro ao buscar itemPedidos:', error));
+  }, []);
+
+  const addItemPedido = async (novoItemPedido: Omit<ItemPedido, 'id'>) => {
+    try {
+      const response = await axios.post('http://localhost:3001/api/itempedido', novoItemPedido);
+      setItemPedidos(prevItemPedidos => [
+        ...prevItemPedidos,
+        { ...novoItemPedido, id: response.data.id },
+      ]);
+    } catch (error) {
+      console.error('Erro ao adicionar itemPedido:', error);
+    }
   };
 
-  const updateItemPedido = (itemPedidoAtualizado: ItemPedido) => {
-    setItemPedidos((newItemPedidos) =>
-      newItemPedidos.map((itemPedido) =>
-        itemPedido.id === itemPedidoAtualizado.id ? itemPedidoAtualizado : itemPedido
-      )
-    );
+  const updateItemPedido = async (itemPedidoAtualizado: ItemPedido) => {
+    try {
+      await axios.put(`http://localhost:3001/api/itempedido/${itemPedidoAtualizado.id}`, itemPedidoAtualizado);
+      setItemPedidos(prevItemPedidos =>
+        prevItemPedidos.map(itemPedido =>
+          itemPedido.id === itemPedidoAtualizado.id ? itemPedidoAtualizado : itemPedido
+        )
+      );
+    } catch (error) {
+      console.error('Erro ao atualizar itemPedido:', error);
+    }
   };
 
-  const deleteItemPedido = (id: number) => {
-    setItemPedidos((currentItemPedidos) =>
-      currentItemPedidos.filter((itemPedido) => itemPedido.id !== id)
-    );
+  const deleteItemPedido = async (id: number) => {
+    try {
+      await axios.delete(`http://localhost:3001/api/itempedido/${id}`);
+      setItemPedidos(prevItemPedidos =>
+        prevItemPedidos.filter(itemPedido => itemPedido.id !== id)
+      );
+    } catch (error) {
+      console.error('Erro ao excluir itemPedido:', error);
+    }
   };
 
   return (

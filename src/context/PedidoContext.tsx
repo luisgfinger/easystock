@@ -1,12 +1,5 @@
-/*
-id number Chave primária
-data Date Data de criação do pedido
-fornecedorId number Chave estrangeira para a tabela Fornecedor
-status string Status do pedido (ex: "Pendente", "Concluído")
-total number Valor total do pedido
-*/
-
-import React, { createContext, useState, ReactNode, useContext } from "react";
+import React, { createContext, useState, ReactNode, useContext, useEffect } from 'react';
+import axios from 'axios';
 
 interface Pedido {
   id: number;
@@ -18,53 +11,66 @@ interface Pedido {
 
 interface PedidoContextType {
   pedidos: Pedido[];
-  addPedido: (novoPedido: Pedido) => void;
-  updatePedido: (pedidoAtualizado: Pedido) => void; 
+  addPedido: (novoPedido: Omit<Pedido, 'id'>) => void;
+  updatePedido: (pedidoAtualizado: Pedido) => void;
   deletePedido: (id: number) => void;
+  getUltimoPedidoId: () => number | null;
 }
 
 const PedidoContext = createContext<PedidoContextType | undefined>(undefined);
 
-export const PedidoProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
-  const [pedidos, setPedidos] = useState<Pedido[]>([
-    {
-        id: 1,
-        data: new Date(),
-        fornecedorId: 1,
-        status: 'Pendente',
-        total: 0
-    },
-    {
-        id: 2,
-        data: new Date(),
-        fornecedorId: 1,
-        status: 'Pendente',
-        total: 0
-    },
-  ]);
+export const PedidoProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [pedidos, setPedidos] = useState<Pedido[]>([]);
 
-  const addPedido = (novoPedido: Pedido) => {
-    setPedidos([...pedidos, novoPedido]);
+  useEffect(() => {
+    axios.get('http://localhost:3001/api/pedido')
+      .then(response => setPedidos(response.data))
+      .catch(error => console.error('Erro ao buscar pedidos:', error));
+  }, []);
+
+  const addPedido = async (novoPedido: Omit<Pedido, 'id'>) => {
+    try {
+      const response = await axios.post('http://localhost:3001/api/pedido', novoPedido);
+      setPedidos(prevPedidos => [
+        ...prevPedidos,
+        { ...novoPedido, id: response.data.id },
+      ]);
+    } catch (error) {
+      console.error('Erro ao adicionar pedido:', error);
+    }
   };
 
-  const updatePedido = (pedidoAtualizado: Pedido) => {
-    setPedidos((newPedidos) =>
-      newPedidos.map((pedido) =>
-        pedido.id === pedidoAtualizado.id ? pedidoAtualizado : pedido
-      )
-    );
+  const updatePedido = async (pedidoAtualizado: Pedido) => {
+    try {
+      await axios.put(`http://localhost:3001/api/pedido/${pedidoAtualizado.id}`, pedidoAtualizado);
+      setPedidos(prevPedidos =>
+        prevPedidos.map(pedido =>
+          pedido.id === pedidoAtualizado.id ? pedidoAtualizado : pedido
+        )
+      );
+    } catch (error) {
+      console.error('Erro ao atualizar pedido:', error);
+    }
   };
 
-  const deletePedido = (id: number) => {
-    setPedidos((currentPedidos) =>
-      currentPedidos.filter((pedido) => pedido.id !== id)
-    );
+  const deletePedido = async (id: number) => {
+    try {
+      await axios.delete(`http://localhost:3001/api/pedido/${id}`);
+      setPedidos(prevPedidos =>
+        prevPedidos.filter(pedido => pedido.id !== id)
+      );
+    } catch (error) {
+      console.error('Erro ao excluir pedido:', error);
+    }
+  };
+
+  const getUltimoPedidoId = () => {
+    if (pedidos.length === 0) return null;
+    return pedidos[pedidos.length - 1].id;
   };
 
   return (
-    <PedidoContext.Provider value={{ pedidos, addPedido, updatePedido, deletePedido }}>
+    <PedidoContext.Provider value={{ pedidos, addPedido, updatePedido, deletePedido, getUltimoPedidoId }}>
       {children}
     </PedidoContext.Provider>
   );

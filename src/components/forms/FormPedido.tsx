@@ -12,7 +12,7 @@ interface FormProps {
 }
 
 const FormPedido: React.FC<FormProps> = ({ edit }) => {
-  const { pedidos, addPedido, updatePedido } = usePedido();
+  const { pedidos, addPedido, updatePedido, getUltimoPedidoId } = usePedido();
   const { transacoes, addTransacao } = useTransacao();
   const { fornecedores } = useFornecedor();
   const { produtos } = useProduto();
@@ -23,6 +23,7 @@ const FormPedido: React.FC<FormProps> = ({ edit }) => {
   const [idProduto, setIdProduto] = useState(0);
   const [quantidade, setQuantidade] = useState(0);
   const [precoUnit, setPrecoUnit] = useState(0);
+  const [pedidoId, setPedidoId] = useState(0)
 
   const navigate = useNavigate();
 
@@ -42,7 +43,7 @@ const FormPedido: React.FC<FormProps> = ({ edit }) => {
     if (edit && id) {
       const pedido = pedidos.find((p) => p.id === Number(id));
       if (pedido) {
-        setFornecedorId(0);
+        setFornecedorId(fornecedorId);
         setStatus(pedido.status);
         setTotal(pedido.total);
       }
@@ -52,47 +53,64 @@ const FormPedido: React.FC<FormProps> = ({ edit }) => {
   const handleAddItem = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const novoItemPedido = {
-      id: Math.random(),
-      pedidoId: id,
-      produtoId: idProduto,
-      quantidade,
-      precoUnitario: precoUnit,
-    };
+    const ultimoPedidoId = getUltimoPedidoId();
+    const idPedido = ultimoPedidoId !== null ? ultimoPedidoId + 1 : 1;
 
+    const novoPedido = {
+      id: id ? Number(id) : idPedido,
+      data: new Date(),
+      fornecedorId,
+      status,
+      total,
+    };
+  
+    if (edit && id) {
+      console.log('update')
+      const novoItemPedido = {
+        id: Math.random(),
+        pedidoId: Number(id),
+        produtoId: idProduto,
+        quantidade,
+        precoUnitario: precoUnit,
+      };
+      addItemPedido(novoItemPedido);
+      updatePedido(novoPedido);
+      setPedidoId(id);
+
+    } else {
+      console.log('add')
+      console.log(idPedido)
+      const novoItemPedido = {
+        id: Math.random(),
+        pedidoId: idPedido,
+        produtoId: idProduto,
+        quantidade,
+        precoUnitario: precoUnit,
+      };
+      addPedido(novoPedido);
+      addItemPedido(novoItemPedido);
+    }
+  
     const novaTransacao = {
       id: Math.random(),
       data: new Date(),
       tipo: 'saida',
       valor: precoUnit * quantidade,
       produtoId: idProduto,
-      pedidoId: id
-
-    }
-
-    addItemPedido(novoItemPedido);
+      pedidoId: edit? Number(id) : idPedido,
+    };
+  
+    
     addTransacao(novaTransacao);
     setIdProduto(0);
     setQuantidade(0);
     setPrecoUnit(0);
   };
+  
+  
 
   const handleSubmitPedido = (e: React.FormEvent) => {
     e.preventDefault();
-
-    const novoPedido = {
-      id: id ? Number(id) : Math.random(),
-      data: new Date(),
-      fornecedorId,
-      status,
-      total,
-    };
-
-    if (edit && id) {
-      updatePedido(novoPedido);
-    } else {
-      addPedido(novoPedido);
-    }
 
     navigate("/pedidos");
   };
@@ -101,6 +119,18 @@ const FormPedido: React.FC<FormProps> = ({ edit }) => {
     <div className="form-page flex-column">
       <h3>{edit ? "Editar Pedido" : "Cadastro de Pedido"}</h3>
       <form onSubmit={handleSubmitPedido} className="flex-column">
+        <label>Fornecedor</label>
+        <select
+        value={fornecedorId}
+        onChange={(e) => setFornecedorId(Number(e.target.value))}
+        >
+          <option value="">Selecione um fornecedor</option>
+
+          {fornecedores.map((fornecedor) => (
+            <option key={fornecedor.id} value={fornecedor.id}>{fornecedor.nome}</option>
+          ))}
+
+        </select>
         <label>Status:</label>
         <select
           value={status}

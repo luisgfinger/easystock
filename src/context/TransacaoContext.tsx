@@ -1,13 +1,5 @@
-/*
-id number Chave primária
-data Date Data da transação
-tipo string Tipo da transação (ex: "Entrada", "Saída")
-valor number Valor da transação
-produtoId number Chave estrangeira para a tabela Produto
-pedidoId number Chave estrangeira para a tabela Pedido (se aplicável)
-*/
-
-import React, { createContext, useState, ReactNode, useContext } from "react";
+import React, { createContext, useState, ReactNode, useContext, useEffect } from 'react';
+import axios from 'axios';
 
 interface Transacao {
   id: number;
@@ -18,37 +10,59 @@ interface Transacao {
   pedidoId: number;
 }
 
+
 interface TransacaoContextType {
   transacoes: Transacao[];
-  addTransacao: (novaTransacao: Transacao) => void;
-  updateTransacao: (TransacaoAtualizada: Transacao) => void;
+  addTransacao: (novoTransacao: Omit<Transacao, 'id'>) => void;
+  updateTransacao: (transacaoAtualizado: Transacao) => void;
   deleteTransacao: (id: number) => void;
-  
 }
 
 const TransacaoContext = createContext<TransacaoContextType | undefined>(undefined);
 
-export const TransacaoProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
+export const TransacaoProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [transacoes, setTransacoes] = useState<Transacao[]>([]);
 
-  const addTransacao = (novaTrancacao: Transacao) => {
-    setTransacoes([...transacoes, novaTrancacao]);
+  useEffect(() => {
+    axios.get('http://localhost:3001/api/transacao')
+      .then(response => setTransacoes(response.data))
+      .catch(error => console.error('Erro ao buscar transacoes:', error));
+  }, []);
+
+  const addTransacao = async (novoTransacao: Omit<Transacao, 'id'>) => {
+    try {
+      const response = await axios.post('http://localhost:3001/api/transacao', novoTransacao);
+      setTransacoes(prevTransacoes => [
+        ...prevTransacoes,
+        { ...novoTransacao, id: response.data.id },
+      ]);
+    } catch (error) {
+      console.error('Erro ao adicionar transacao:', error);
+    }
   };
 
-  const updateTransacao = (TransacaoAtualizada: Transacao) => {
-    setTransacoes((newTransacao) =>
-      newTransacao.map((transacoes) =>
-        transacoes.id === TransacaoAtualizada.id ? TransacaoAtualizada : transacoes
-      )
-    );
+  const updateTransacao = async (transacaoAtualizado: Transacao) => {
+    try {
+      await axios.put(`http://localhost:3001/api/transacao/${transacaoAtualizado.id}`, transacaoAtualizado);
+      setTransacoes(prevTransacoes =>
+        prevTransacoes.map(transacao =>
+          transacao.id === transacaoAtualizado.id ? transacaoAtualizado : transacao
+        )
+      );
+    } catch (error) {
+      console.error('Erro ao atualizar transacao:', error);
+    }
   };
 
-  const deleteTransacao = (id: number) => {
-    setTransacoes((currentTransacoes) =>
-      currentTransacoes.filter((transacao) => transacao.id !== id)
-    );
+  const deleteTransacao = async (id: number) => {
+    try {
+      await axios.delete(`http://localhost:3001/api/transacao/${id}`);
+      setTransacoes(prevTransacoes =>
+        prevTransacoes.filter(transacao => transacao.id !== id)
+      );
+    } catch (error) {
+      console.error('Erro ao excluir transacao:', error);
+    }
   };
 
   return (

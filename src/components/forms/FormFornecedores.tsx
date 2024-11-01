@@ -4,11 +4,10 @@ contato string Informações de contato
 endereco string Endereço do fornecedor
 */
 
-import React, { useState, useEffect } from "react";
 import { useFornecedor } from "../../context/FornecedorContext";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
-import '../../styles/form.css'
+import "../../styles/form.css";
 
 interface FormProps {
   edit: boolean;
@@ -17,6 +16,7 @@ interface FormProps {
 const FormFornecedores: React.FC<FormProps> = ({ edit }) => {
   const { fornecedores, addFornecedor, updateFornecedor } = useFornecedor();
   const [nome, setNome] = useState("");
+  const [cnpj, setCnpj] = useState("");
   const [contato, setContato] = useState("");
   const [endereco, setEndereco] = useState("");
   const navigate = useNavigate();
@@ -28,6 +28,7 @@ const FormFornecedores: React.FC<FormProps> = ({ edit }) => {
       const fornecedor = fornecedores.find((p) => p.id === Number(id));
       if (fornecedor) {
         setNome(fornecedor.nome);
+        setCnpj(fornecedor.cnpj);
         setContato(fornecedor.contato);
         setEndereco(fornecedor.endereco);
       }
@@ -38,16 +39,17 @@ const FormFornecedores: React.FC<FormProps> = ({ edit }) => {
     e.preventDefault();
 
     const novoFornecedor = {
-      id: id ? Number(id) : Math.random(), 
+      id: id ? Number(id) : Math.random(),
       nome,
+      cnpj,
       contato,
       endereco,
     };
 
     if (edit && id) {
-      updateFornecedor(novoFornecedor); 
+      updateFornecedor(novoFornecedor);
     } else {
-      addFornecedor(novoFornecedor); 
+      addFornecedor(novoFornecedor);
     }
 
     navigate("/fornecedores");
@@ -65,7 +67,16 @@ const FormFornecedores: React.FC<FormProps> = ({ edit }) => {
           onChange={(e) => setNome(e.target.value)}
           required
         />
-       
+
+        <label>CNPJ:</label>
+        <input
+          type="text"
+          maxLength={45}
+          value={cnpj}
+          onChange={(e) => setCnpj(e.target.value)}
+          required
+        />
+
         <label>Contato:</label>
         <input
           type="text"
@@ -74,7 +85,7 @@ const FormFornecedores: React.FC<FormProps> = ({ edit }) => {
           onChange={(e) => setContato(e.target.value)}
           required
         />
-        
+
         <label>Endereço:</label>
         <input
           type="text"
@@ -84,7 +95,9 @@ const FormFornecedores: React.FC<FormProps> = ({ edit }) => {
           required
         />
 
-        <button className="submit-button" type="submit">{edit ? "Atualizar" : "Cadastrar"}</button> 
+        <button className="submit-button" type="submit">
+          {edit ? "Atualizar" : "Cadastrar"}
+        </button>
       </form>
     </div>
   );

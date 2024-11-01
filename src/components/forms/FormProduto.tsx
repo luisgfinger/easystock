@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useProduto } from "../../context/ProdutoContext";
 import { useNavigate, useParams } from "react-router-dom";
-
+import axios from "axios";
 import '../../styles/form.css';
 import { useFornecedor } from "../../context/FornecedorContext";
 
@@ -16,10 +16,9 @@ const FormProduto: React.FC<FormProps> = ({ edit }) => {
   const [descricao, setDescricao] = useState("");
   const [preco, setPreco] = useState(0);
   const [quantidade, setQuantidade] = useState(0);
-  const [imagem, setImagem] = useState("");
+  const [imagemFile, setImagemFile] = useState<File | null>(null); 
   const [fornecedorId, setFornecedorId] = useState(1);
   const navigate = useNavigate();
-
   const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
@@ -30,14 +29,36 @@ const FormProduto: React.FC<FormProps> = ({ edit }) => {
         setDescricao(produto.descricao);
         setPreco(produto.preco);
         setQuantidade(produto.quantidade);
-        setImagem(produto.imagem);
         setFornecedorId(produto.fornecedorId);
       }
     }
   }, [edit, id, produtos]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImagemFile(e.target.files[0]);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    let imageUrl = "";
+
+    if (imagemFile) {
+      const formData = new FormData();
+      formData.append("imagem", imagemFile);
+
+      try {
+        const uploadResponse = await axios.post("http://localhost:3001/upload", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        imageUrl = uploadResponse.data.imageUrl; 
+      } catch (error) {
+        console.error("Erro ao fazer upload da imagem:", error);
+        return;
+      }
+    }
 
     const novoProduto = {
       id: id ? Number(id) : Math.random(),
@@ -45,7 +66,7 @@ const FormProduto: React.FC<FormProps> = ({ edit }) => {
       descricao,
       preco,
       quantidade,
-      imagem,
+      imagem: imageUrl,
       fornecedorId,
     };
 
@@ -94,12 +115,11 @@ const FormProduto: React.FC<FormProps> = ({ edit }) => {
           required
         />
 
-        <label>Imagem (URL):</label>
+        <label>Imagem:</label>
         <input
-          type="text"
-          value={imagem}
-          onChange={(e) => setImagem(e.target.value)}
-          required
+          type="file"
+          onChange={handleImageChange}
+          required={!edit}
         />
 
         <label>Fornecedor:</label>
@@ -108,12 +128,9 @@ const FormProduto: React.FC<FormProps> = ({ edit }) => {
           onChange={(e) => setFornecedorId(Number(e.target.value))}
         >
           <option value="">Selecione um fornecedor</option>
-          {fornecedores.map((fornecedor) => {
-            return (
-              <option key={fornecedor?.id} value={fornecedor.id}>{fornecedor.nome}</option>
-            )
-          })}
-
+          {fornecedores.map((fornecedor) => (
+            <option key={fornecedor?.id} value={fornecedor.id}>{fornecedor.nome}</option>
+          ))}
         </select>
 
         <button className="submit-button" type="submit">{edit ? "Atualizar" : "Cadastrar"}</button>

@@ -56,10 +56,12 @@ const ProdutoList: React.FC<ProdutoListProps> = ({ buscaNome, buscaFornecedor, o
             <li key={produto.id}>
               <ul className="inside flex-column">
                 <li>
+                  <p>id: {produto.id}</p>
                   <h2>{produto.nome}</h2>
                 </li>
                 <li>
-                  <img src={produto.imagem} alt="img produto" />
+                <img src={`http://localhost:3001${produto.imagem}`} alt="Imagem do produto" />
+
                 </li>
                 <li>
                   <h3>{produto.descricao}</h3>
