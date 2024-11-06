@@ -359,6 +359,7 @@ app.get("/api/itempedido", (req, res) => {
 
 app.post("/api/itempedido", (req, res) => {
   const { pedidoId, produtoId, quantidade, precoUnitario } = req.body;
+  
   db.run(
     "INSERT INTO itemPedido (pedidoId, produtoId, quantidade, precoUnitario) VALUES (?, ?, ?, ?)",
     [pedidoId, produtoId, quantidade, precoUnitario],
@@ -368,7 +369,20 @@ app.post("/api/itempedido", (req, res) => {
         res.status(500).json({ error: err.message });
         return;
       }
-      res.json({ id: this.lastID });
+
+      db.run(
+        "UPDATE produto SET quantidade = quantidade - ? WHERE id = ?",
+        [quantidade, produtoId],
+        function (err) {
+          if (err) {
+            console.error("Erro ao atualizar quantidade do produto:", err);
+            res.status(500).json({ error: err.message });
+            return;
+          }
+          
+          res.json({ id: this.lastID });
+        }
+      );
     }
   );
 });

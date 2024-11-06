@@ -36,3 +36,19 @@
 ul{
   margin-top: 2%;
 }
+
+.itens{
+  height: 10rem;
+  overflow-x: hidden;
+}
+
+@media(min-width: 431px){
+  .content {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    flex-wrap: wrap; 
+    max-width: 1020px; 
+    margin: 0 auto; 
+  }
+}

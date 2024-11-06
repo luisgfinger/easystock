@@ -2,9 +2,9 @@ import Delete from "../components/Delete";
 import ProfileIcon from "../components/Icons/ProfileIcon";
 import Logo from "../components/Logo";
 import Button from "../components/Ui/Button";
-import FormFornecedores from "../components/forms/FormFornecedores";
-import FormPedido from "../components/forms/FormPedido";
-import FormProduto from "../components/forms/FormProduto";
+import FormFornecedores from "./forms/FormFornecedores";
+import FormPedido from "./forms/FormPedido";
+import FormProduto from "./forms/FormProduto";
 import FornecedorList from "../components/listas/FornecedorList";
 import PedidoList from "../components/listas/PedidoList";
 import ProdutoList from "../components/listas/ProdutoList";
@@ -13,14 +13,15 @@ import { PedidoProvider } from "../context/PedidoContext";
 import { ProdutoProvider } from "../context/ProdutoContext";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import "../styles/home.css";
-import FormClientes from "../components/forms/FormClientes";
+import FormClientes from "./forms/FormClientes";
 import ClienteList from "../components/listas/ClienteList";
 import TransacaoList from "../components/listas/TransacaoList";
 import { ClienteProvider } from "../context/ClienteContext";
 import { ItemPedidoProvider } from "../context/ItemPedidoContext";
 import { TransacaoProvider } from "../context/TransacaoContext";
 import { useEffect, useState } from "react";
-import FormTransacoes from "../components/forms/FormTransacoes";
+import FormTransacoes from "./forms/FormTransacoes";
+import BurgerMenu from "../components/BurgerMenu";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -35,6 +36,11 @@ export default function Home() {
   const [buscaData, setBuscaData] = useState("");
   const [buscaStatus, setBuscaStatus] = useState("");
   const [buscaTipo, setBuscaTipo] = useState("");
+
+  const [mobileMenu, setMobileMenu] = useState(false)
+
+  const showMobileMenu = () => (setMobileMenu(!mobileMenu))
+  
 
   const addProduto = () => {
     navigate("/produtos/cadastrar");
@@ -62,13 +68,8 @@ export default function Home() {
         <span className="logotype">
           <Logo />
         </span>
-        <span className="profileIcon">
-          <ProfileIcon />
-        </span>
-      </header>
-
-      <section id="navigate" className="container">
-        <nav className="navbar flex-row">
+        
+        <nav className="navbar desktop-only">
           <ul className="flex-row">
             <li>
               <a href="/fornecedores">Fornecedores</a>
@@ -87,6 +88,36 @@ export default function Home() {
             </li>
           </ul>
         </nav>
+        <span className="profileIcon desktop-only">
+          <ProfileIcon />
+        </span>
+        <div className="burger mobile-only" onClick={showMobileMenu}>
+          <BurgerMenu/>
+        </div>
+      </header>
+
+      <section id="navigate" className="container">
+        {mobileMenu&&
+        <nav className="navbar mobile-only">
+          <ul className="flex-column">
+            <li>
+              <a href="/fornecedores">Fornecedores</a>
+            </li>
+            <li>
+              <a href="/clientes">Clientes</a>
+            </li>
+            <li>
+              <a href="/produtos">Produtos</a>
+            </li>
+            <li>
+              <a href="/pedidos">Pedidos</a>
+            </li>
+            <li>
+              <a href="/transacoes">Transações</a>
+            </li>
+          </ul>
+        </nav>
+        }
       </section>
 
       <FornecedorProvider>
@@ -306,11 +337,11 @@ export default function Home() {
 
                       <Route
                         path="/pedidos/cadastrar"
-                        element={<FormPedido edit={false} />}
+                        element={<FormPedido edit={false} entrada={false}/>}
                       />
                       <Route
                         path="/pedidos/editar/:id"
-                        element={<FormPedido edit={true} />}
+                        element={<FormPedido edit={true} entrada={false}/>}
                       />
                       <Route
                         path="/pedidos/deletar/:id"
@@ -351,7 +382,7 @@ export default function Home() {
 
                       <Route
                         path="/transacoes/cadastrar"
-                        element={<FormTransacoes edit={false} />}
+                        element={<FormPedido edit={false} entrada={true} />}
                       />
                       <Route
                         path="/transacoes/editar/:id"

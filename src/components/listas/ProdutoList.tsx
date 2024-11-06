@@ -56,15 +56,14 @@ const ProdutoList: React.FC<ProdutoListProps> = ({ buscaNome, buscaFornecedor, o
             <li key={produto.id}>
               <ul className="inside flex-column">
                 <li>
-                  <p>id: {produto.id}</p>
-                  <h2>{produto.nome}</h2>
+                  <h3>{produto.nome}</h3>
                 </li>
                 <li>
                 <img src={`http://localhost:3001${produto.imagem}`} alt="Imagem do produto" />
 
                 </li>
                 <li>
-                  <h3>{produto.descricao}</h3>
+                  <p>{produto.descricao}</p>
                 </li>
                 <li>
                   <h3>R${produto.preco},00</h3>
@@ -74,7 +73,7 @@ const ProdutoList: React.FC<ProdutoListProps> = ({ buscaNome, buscaFornecedor, o
                 </li>
                 <li>
                   {fornecedor ? (
-                    <p>{fornecedor.nome}</p>
+                    <p>Por: {fornecedor.nome}</p>
                   ) : (
                     <p>Fornecedor não encontrado</p>
                   )}

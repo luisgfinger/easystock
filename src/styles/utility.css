@@ -1,17 +1,42 @@
-.flex{
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.container {
+  width: 25rem;
+}
+
+.desktop-only{
+    display: none;
+}
+
+.mobile-only{
     display: flex;
 }
 
-.flex-column{
-    display: flex;
-    flex-direction: column;
+@media(min-width: 431px){
+    .desktop-only{
+        display: flex;
+        flex-direction: row;
+    }
+
+    .mobile-only{
+        display: none;
+    }
+
+    .container{
+        width: 80rem;
+    }
 }
 
-.flex-row{
-    display: flex;
-    flex-direction: row;
-}
 
-.container{
-    width: 30rem;
-}

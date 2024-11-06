@@ -1,5 +1,5 @@
 #header{
-    width: 30rem;
+    width: 25rem;
     height: 3.25rem;
     background-color: var(--bg-color);
     margin-top: 5%;
@@ -38,17 +38,18 @@
     justify-content: center;
 }
 
-#navigate .navbar{
+.navbar{
     justify-content: center;
 }
 
-#navigate .navbar a:hover{
+.navbar a:hover{
     color: var(--primary-color);
     justify-content: center;
 }
 
-#navigate .navbar >ul{
+.navbar >ul{
     gap: 1rem;
+    text-align: center;
 }
 
 #listas{
@@ -76,3 +77,13 @@ section{
 .filtro-form input{
     margin-bottom: 0.5rem;
 }
+
+@media(min-width: 431px){
+    #header{
+        width: 80rem;
+        margin-top: 1%;
+        justify-content: center;
+        gap: 10rem;
+    }
+}
+

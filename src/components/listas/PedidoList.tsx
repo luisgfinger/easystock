@@ -5,6 +5,7 @@ import Button from "../Ui/Button";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useProduto } from "../../context/ProdutoContext";
+import { useTransacao } from "../../context/TransacaoContext";
 
 interface PedidoListProps {
   buscaData?: string;
@@ -18,6 +19,7 @@ const PedidoList: React.FC<PedidoListProps> = ({ buscaData, buscaStatus, ordenac
   const { fornecedores } = useFornecedor();
   const { itemPedidos } = useItemPedido();
   const { produtos } = useProduto();
+  const {transacoes} = useTransacao();
   const navigate = useNavigate();
 
   const editPedido = (id: number) => {
@@ -79,7 +81,6 @@ const PedidoList: React.FC<PedidoListProps> = ({ buscaData, buscaStatus, ordenac
           return (
             <li key={pedido.id}>
               <ul className="inside flex-column">
-                <h3>Id: {pedido.id}</h3>
                 <li>Data: {formatarData(pedido.data.toISOString())}</li>
                 <li>
                   {fornecedor ? (
@@ -99,7 +100,6 @@ const PedidoList: React.FC<PedidoListProps> = ({ buscaData, buscaStatus, ordenac
                             {produto ? (
                               <ul>
                                 <li><h3>{produto.nome}</h3></li>
-                                <li>pedidoId: {item.pedidoId}</li>
                                 <li>Valor: R${item.precoUnitario},00</li>
                                 <li>Quantidade: {item.quantidade}</li>
                                 <li>Total: R${item.quantidade*item.precoUnitario},00</li>
