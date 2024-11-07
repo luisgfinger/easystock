@@ -15,6 +15,11 @@ const ProdutoList: React.FC<ProdutoListProps> = ({ buscaNome, buscaFornecedor, o
   const { fornecedores } = useFornecedor();
   const navigate = useNavigate();
 
+  const usuarioLogado = localStorage.getItem("usuarioLogado");
+  if(!usuarioLogado){
+    navigate("/login")
+  }
+
   const editProduto = (id: number) => {
     navigate(`/produtos/editar/${id}`);
   };

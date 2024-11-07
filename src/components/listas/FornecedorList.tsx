@@ -13,6 +13,11 @@ interface FornecedorListProps{
 const FornecedorList: React.FC<FornecedorListProps> = ({ buscaNome, buscaContato }) => {
   const { fornecedores } = useFornecedor();
   const navigate = useNavigate();
+  
+  const usuarioLogado = localStorage.getItem("usuarioLogado");
+  if(!usuarioLogado){
+    navigate("/login")
+  }
 
   const editFornecedor = (id: number) => {
     navigate(`/fornecedores/editar/${id}`);

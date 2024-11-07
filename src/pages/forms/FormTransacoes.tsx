@@ -8,16 +8,6 @@ interface FormProps {
   edit: boolean;
 }
 
-/*
-id number Chave primária
-data Date Data da transação
-tipo string Tipo da transação (ex: "Entrada", "Saída")
-valor number Valor da transação
-produtoId number Chave estrangeira para a tabela Produto
-pedidoId number Chave estrangeira para a tabela Pedido (se aplicável)
-*/
-
-
 const FormTransacoes: React.FC<FormProps> = ({ edit }) => {
   const { transacoes, addTransacao, updateTransacao } = useTransacao();
   const {produtos} = useProduto();
@@ -31,6 +21,11 @@ const FormTransacoes: React.FC<FormProps> = ({ edit }) => {
   const navigate = useNavigate();
 
   const { id } = useParams<{ id: string }>();
+
+  const usuarioLogado = localStorage.getItem("usuarioLogado");
+  if(!usuarioLogado){
+    navigate("/login")
+  }
 
   useEffect(() => {
     if (edit && id) {

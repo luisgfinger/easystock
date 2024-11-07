@@ -1,12 +1,3 @@
-/*
-id number Chave primária
-data Date Data da transação
-tipo string Tipo da transação (ex: "Entrada", "Saída")
-valor number Valor da transação
-produtoId number Chave estrangeira para a tabela Produto
-pedidoId number Chave estrangeira para a tabela Pedido (se aplicável)
-*/
-
 import { usePedido } from "../../context/PedidoContext";
 import { useProduto } from "../../context/ProdutoContext";
 import { useTransacao } from "../../context/TransacaoContext";
@@ -25,6 +16,11 @@ const TransacaoList: React.FC<TransacaoListProps> = ({buscaTipo, buscaData}) => 
   const { pedidos } = usePedido();
   const {produtos} = useProduto();
   const navigate = useNavigate();
+
+  const usuarioLogado = localStorage.getItem("usuarioLogado");
+  if(!usuarioLogado){
+    navigate("/login")
+  }
 
   const deleteTransacao = (id: number) => {
     navigate(`/transacoes/deletar/${id}`);

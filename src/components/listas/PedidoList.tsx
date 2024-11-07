@@ -22,6 +22,11 @@ const PedidoList: React.FC<PedidoListProps> = ({ buscaData, buscaStatus, ordenac
   const {transacoes} = useTransacao();
   const navigate = useNavigate();
 
+  const usuarioLogado = localStorage.getItem("usuarioLogado");
+  if(!usuarioLogado){
+    navigate("/login")
+  }
+
   const editPedido = (id: number) => {
     navigate(`/pedidos/editar/${id}`);
   };

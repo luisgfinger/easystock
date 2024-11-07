@@ -16,27 +16,33 @@
   width: 25rem;
 }
 
-.desktop-only{
-    display: none;
+.desktop-only {
+  display: none;
 }
 
-.mobile-only{
+.mobile-only {
+  display: flex;
+}
+
+@media(min-width: 819px){
+  .container{
+    width: 40rem;
+  }
+}
+
+@media (min-width: 1025px) {
+  .desktop-only {
     display: flex;
-}
+    flex-direction: row;
+  }
 
-@media(min-width: 431px){
-    .desktop-only{
-        display: flex;
-        flex-direction: row;
-    }
+  .mobile-only {
+    display: none;
+  }
 
-    .mobile-only{
-        display: none;
-    }
-
-    .container{
-        width: 80rem;
-    }
+  .container {
+    width: 80rem;
+  }
 }
 
 

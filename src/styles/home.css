@@ -13,7 +13,10 @@
 
 #header .logotype{
     width: 12.75rem;
-    
+}
+
+#header .logotype:hover{
+    cursor: pointer;
 }
 
 #header .logotype >img{
@@ -37,6 +40,12 @@
     margin-top: 0 !important;
     justify-content: center;
 }
+
+#navigate ul{
+    align-items: center;
+    margin-bottom: 5%;
+}
+
 
 .navbar{
     justify-content: center;
@@ -78,7 +87,13 @@ section{
     margin-bottom: 0.5rem;
 }
 
-@media(min-width: 431px){
+@media(min-width: 819px){
+    #header{
+        width: 40rem;
+    }
+}
+
+@media(min-width: 1025px){
     #header{
         width: 80rem;
         margin-top: 1%;

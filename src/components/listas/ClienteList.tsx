@@ -12,6 +12,11 @@ const ClienteList: React.FC<ClienteListProps> = ({ buscaNome, buscaCpf_cnpj }) =
   const { clientes } = useCliente();
   const navigate = useNavigate();
 
+  const usuarioLogado = localStorage.getItem("usuarioLogado");
+  if(!usuarioLogado){
+    navigate("/login")
+  }
+
   const editCliente = (id: number) => {
     navigate(`/clientes/editar/${id}`);
   };

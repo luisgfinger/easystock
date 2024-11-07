@@ -1,11 +1,5 @@
-/*id number Chave primária
-nome string Nome do usuário
-email string Email do usuário
-senha string Senha armazenada com hash
-*/
-
 import React from 'react';
-import { useUsuario } from '../../context/UsuarioContext';
+import { useUsuario } from '../../context/UsuarioContex';
 
 
 const UsuarioList: React.FC = () => {
@@ -20,6 +14,7 @@ const UsuarioList: React.FC = () => {
               <ul>
                 <li>Email: {usuario.email}</li>
                 <li>Senha: {usuario.senha}</li>
+                <li>Admin: {usuario.admin? "True" : "False"}</li>
               </ul>
             </li>
           );

@@ -7,6 +7,7 @@ interface ItemPedido {
   produtoId: number;
   quantidade: number;
   precoUnitario: number;
+  entrada: boolean;
   
 }
 

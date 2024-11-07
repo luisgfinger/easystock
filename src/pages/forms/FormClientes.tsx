@@ -17,6 +17,12 @@ const FormClientes: React.FC<FormProps> = ({ edit }) => {
 
   const { id } = useParams<{ id: string }>();
 
+  const usuarioLogado = localStorage.getItem("usuarioLogado");
+
+  if(!usuarioLogado){
+    navigate("/login")
+  }
+
   useEffect(() => {
     if (edit && id) {
       const cliente = clientes.find((p) => p.id === Number(id));

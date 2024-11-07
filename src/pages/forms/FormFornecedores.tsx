@@ -23,6 +23,11 @@ const FormFornecedores: React.FC<FormProps> = ({ edit }) => {
 
   const { id } = useParams<{ id: string }>();
 
+  const usuarioLogado = localStorage.getItem("usuarioLogado");
+  if(!usuarioLogado){
+    navigate("/login")
+  }
+
   useEffect(() => {
     if (edit && id) {
       const fornecedor = fornecedores.find((p) => p.id === Number(id));

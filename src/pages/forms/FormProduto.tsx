@@ -21,6 +21,11 @@ const FormProduto: React.FC<FormProps> = ({ edit }) => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
+  const usuarioLogado = localStorage.getItem("usuarioLogado");
+  if(!usuarioLogado){
+    navigate("/login")
+  }
+
   useEffect(() => {
     if (edit && id) {
       const produto = produtos.find((p) => p.id === Number(id));

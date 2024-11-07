@@ -32,6 +32,11 @@ const FormPedido: React.FC<FormProps> = ({ edit, entrada }) => {
   const [id, setId] = useState(0);
   const { id: paramId } = useParams<{ id: string }>();
 
+  const usuarioLogado = localStorage.getItem("usuarioLogado");
+  if(!usuarioLogado){
+    navigate("/login")
+  }
+
   useEffect(() => {
     if (edit) {
       setId(Number(paramId));
@@ -76,7 +81,8 @@ const FormPedido: React.FC<FormProps> = ({ edit, entrada }) => {
         pedidoId: Number(id),
         produtoId: idProduto,
         quantidade,
-        precoUnitario: precoUnit
+        precoUnitario: precoUnit,
+        entrada: entrada? true : false
       };
 
       if (quantidade > 0) {
@@ -90,7 +96,8 @@ const FormPedido: React.FC<FormProps> = ({ edit, entrada }) => {
         pedidoId: idPedido,
         produtoId: idProduto,
         quantidade,
-        precoUnitario: precoUnit
+        precoUnitario: precoUnit,
+        entrada: entrada? true : false
       };
 
       if (quantidade > 0) {

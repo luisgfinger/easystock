@@ -90,6 +90,7 @@ db.run(`
     produtoId INTEGER,
     quantidade INTEGER,
     precoUnitario FLOAT,
+    entrada BOOLEAN,
     FOREIGN KEY (pedidoId) REFERENCES pedido(id),
     FOREIGN KEY (produtoId) REFERENCES produto(id)
     );
@@ -105,6 +106,16 @@ db.run(`
       pedidoId INTEGER,
       FOREIGN KEY(produtoId) REFERENCES produto(id),
       FOREIGN KEY (pedidoId) REFERENCES pedido(id)
+      );
+      `);
+
+    db.run(`
+      CREATE TABLE IF NOT EXISTS usuario(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      nome TEXT NOT NULL,
+      email TEXT NOT NULL,
+      senha TEXT NOT NULL,
+      admin BOOLEAN 
       );
       `);
 
@@ -358,11 +369,11 @@ app.get("/api/itempedido", (req, res) => {
 });
 
 app.post("/api/itempedido", (req, res) => {
-  const { pedidoId, produtoId, quantidade, precoUnitario } = req.body;
-  
+  const { pedidoId, produtoId, quantidade, precoUnitario, entrada } = req.body;
+
   db.run(
-    "INSERT INTO itemPedido (pedidoId, produtoId, quantidade, precoUnitario) VALUES (?, ?, ?, ?)",
-    [pedidoId, produtoId, quantidade, precoUnitario],
+    "INSERT INTO itemPedido (pedidoId, produtoId, quantidade, precoUnitario, entrada) VALUES (?, ?, ?, ?, ?)",
+    [pedidoId, produtoId, quantidade, precoUnitario, entrada],
     function (err) {
       if (err) {
         console.error("Erro ao inserir itemPedido:", err);
@@ -370,16 +381,18 @@ app.post("/api/itempedido", (req, res) => {
         return;
       }
 
+      const quantidadeAdjustment = entrada ? quantidade : -quantidade;
+
       db.run(
-        "UPDATE produto SET quantidade = quantidade - ? WHERE id = ?",
-        [quantidade, produtoId],
+        "UPDATE produto SET quantidade = quantidade + ? WHERE id = ?",
+        [quantidadeAdjustment, produtoId],
         function (err) {
           if (err) {
             console.error("Erro ao atualizar quantidade do produto:", err);
             res.status(500).json({ error: err.message });
             return;
           }
-          
+
           res.json({ id: this.lastID });
         }
       );
@@ -387,12 +400,13 @@ app.post("/api/itempedido", (req, res) => {
   );
 });
 
+
 app.put("/api/itempedido/:id", (req, res) => {
   const { id } = req.params;
-  const { pedidoId, produtoId, quantidade, precoUnitario } = req.body;
+  const { pedidoId, produtoId, quantidade, precoUnitario, entrada } = req.body;
   db.run(
-    "UPDATE itemPedido SET pedidoId = ?, produtoId = ?, quantidade = ?, precoUnitario = ? WHERE id = ?",
-    [pedidoId, produtoId, quantidade, precoUnitario, id],
+    "UPDATE itemPedido SET pedidoId = ?, produtoId = ?, quantidade = ?, precoUnitario = ?, entrada = ? WHERE id = ?",
+    [pedidoId, produtoId, quantidade, precoUnitario, entrada, id],
     function (err) {
       if (err) {
         res.status(500).json({ error: err.message });
@@ -467,6 +481,58 @@ app.delete("/api/transacao/:id", (req, res) => {
   });
 });
 
+app.get("/api/usuario", (req, res) => {
+  db.all("SELECT * FROM usuario", [], (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json(rows);
+  });
+});
+
+app.post("/api/usuario", (req, res) => {
+  const { nome, email, senha, admin } = req.body;
+  db.run(
+    "INSERT INTO usuario (nome, email, senha, admin) VALUES (?, ?, ?, ?)",
+    [nome, email, senha, admin],
+    function (err) {
+      if (err) {
+        console.error("Erro ao inserir usuario:", err);
+        res.status(500).json({ error: err.message });
+        return;
+      }
+      res.json({ id: this.lastID });
+    }
+  );
+});
+
+app.put("/api/usuario/:id", (req, res) => {
+  const { id } = req.params;
+  const { nome, email, senha, admin} = req.body;
+  db.run(
+    "UPDATE usuario SET nome = ?, email = ?, senha = ?, admin = ?  WHERE id = ?",
+    [nome, email, senha, admin, id],
+    function (err) {
+      if (err) {
+        res.status(500).json({ error: err.message });
+        return;
+      }
+      res.json({ updatedRows: this.changes });
+    }
+  );
+});
+
+app.delete("/api/usuario/:id", (req, res) => {
+  const { id } = req.params;
+  db.run("DELETE FROM usuario WHERE id = ?", id, function (err) {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json({ deletedRows: this.changes });
+  });
+});
 
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);

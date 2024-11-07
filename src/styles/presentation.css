@@ -1,0 +1,57 @@
+.presentation-container {
+    padding: 40px;
+    max-width: 800px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+
+.presentation-title {
+    font-size: 2.5em;
+    color: #4a90e2;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.presentation-intro {
+    font-size: 1.2em;
+    color: #555;
+    text-align: center;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.presentation-subtitle {
+    font-size: 1.8em;
+    color: #333;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.presentation-features {
+    list-style-type: disc;
+    padding-left: 20px;
+    font-size: 1.1em;
+    color: #444;
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+
+.presentation-features li {
+    margin-bottom: 15px;
+}
+
+.presentation-footer {
+    font-size: 1.1em;
+    color: #555;
+    text-align: center;
+    margin-top: 20px;
+    line-height: 1.6;
+}
+
+@media(max-width: 431px){
+    .presentation-title {
+        font-size: 1.5rem;
+    }
+}
