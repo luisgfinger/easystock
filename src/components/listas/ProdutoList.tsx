@@ -1,7 +1,7 @@
-import React from "react";
 import { useFornecedor } from "../../context/FornecedorContext";
 import { useProduto } from "../../context/ProdutoContext";
 import Button from "../Ui/Button";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface ProdutoListProps {
@@ -10,15 +10,23 @@ interface ProdutoListProps {
   ordenacao?: string;
 }
 
-const ProdutoList: React.FC<ProdutoListProps> = ({ buscaNome, buscaFornecedor, ordenacao }) => {
+const ProdutoList: React.FC<ProdutoListProps> = ({
+  buscaNome,
+  buscaFornecedor,
+  ordenacao,
+}) => {
   const { produtos } = useProduto();
   const { fornecedores } = useFornecedor();
   const navigate = useNavigate();
 
-  const usuarioLogado = localStorage.getItem("usuarioLogado");
-  if(!usuarioLogado){
-    navigate("/login")
-  }
+  const admin = localStorage.getItem("admin");
+
+  useEffect(() => {
+    const usuarioLogado = localStorage.getItem("usuarioLogado");
+    if (!usuarioLogado) {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const editProduto = (id: number) => {
     navigate(`/produtos/editar/${id}`);
@@ -35,16 +43,17 @@ const ProdutoList: React.FC<ProdutoListProps> = ({ buscaNome, buscaFornecedor, o
       ? produto.nome.toLowerCase().includes(buscaNome.toLowerCase())
       : true;
 
-    const fornecedorMatch = buscaFornecedor && fornecedor
-      ? fornecedor.nome.toLowerCase().includes(buscaFornecedor.toLowerCase())
-      : true;
+    const fornecedorMatch =
+      buscaFornecedor && fornecedor
+        ? fornecedor.nome.toLowerCase().includes(buscaFornecedor.toLowerCase())
+        : true;
 
     return nomeMatch && fornecedorMatch;
   });
 
   const produtosOrdenados = produtosFiltrados.sort((a, b) => {
     if (ordenacao === "crescente") {
-      return a.preco - b.preco; 
+      return a.preco - b.preco;
     } else {
       return b.preco - a.preco;
     }
@@ -52,7 +61,7 @@ const ProdutoList: React.FC<ProdutoListProps> = ({ buscaNome, buscaFornecedor, o
 
   return (
     <ul className="content">
-     {produtosOrdenados.length > 0 ? (
+      {produtosOrdenados.length > 0 ? (
         produtosOrdenados.map((produto) => {
           const fornecedor = fornecedores.find(
             (f) => f.id === produto.fornecedorId
@@ -64,8 +73,10 @@ const ProdutoList: React.FC<ProdutoListProps> = ({ buscaNome, buscaFornecedor, o
                   <h3>{produto.nome}</h3>
                 </li>
                 <li>
-                <img src={`http://localhost:3001${produto.imagem}`} alt="Imagem do produto" />
-
+                  <img
+                    src={`http://localhost:3001${produto.imagem}`}
+                    alt="Imagem do produto"
+                  />
                 </li>
                 <li>
                   <p>{produto.descricao}</p>
@@ -84,18 +95,22 @@ const ProdutoList: React.FC<ProdutoListProps> = ({ buscaNome, buscaFornecedor, o
                   )}
                 </li>
 
-                <div className="delete-edit-button flex-column">
-                  <Button
-                    text="Editar produto"
-                    onClick={() => editProduto(produto.id)}
-                  />
-                  <span className="delete-button">
+                {admin ? (
+                  <div className="delete-edit-button flex-column">
                     <Button
-                      text="Excluir"
-                      onClick={() => deleteProduto(produto.id)}
+                      text="Editar produto"
+                      onClick={() => editProduto(produto.id)}
                     />
-                  </span>
-                </div>
+                    <span className="delete-button">
+                      <Button
+                        text="Excluir"
+                        onClick={() => deleteProduto(produto.id)}
+                      />
+                    </span>
+                  </div>
+                ) : (
+                  <></>
+                )}
               </ul>
             </li>
           );

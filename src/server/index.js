@@ -76,10 +76,10 @@ db.run(`
   CREATE TABLE IF NOT EXISTS pedido(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   data DATE,
-  fornecedorId INTEGER,
+  clienteId INTEGER,
   status TEXT,
   total FLOAT,
-  FOREIGN KEY(fornecedorId) REFERENCES fornecedor(id)
+  FOREIGN KEY(clienteId) REFERENCES cliente(id)
   );
   `);
 
@@ -316,10 +316,10 @@ app.get("/api/pedido", (req, res) => {
 });
 
 app.post("/api/pedido", (req, res) => {
-  const { data, fornecedorId, status, total } = req.body;
+  const { data, clienteId, status, total } = req.body;
   db.run(
-    "INSERT INTO pedido (data, fornecedorId, status, total) VALUES (?, ?, ?, ?)",
-    [data, fornecedorId, status, total],
+    "INSERT INTO pedido (data, clienteId, status, total) VALUES (?, ?, ?, ?)",
+    [data, clienteId, status, total],
     function (err) {
       if (err) {
         console.error("Erro ao inserir pedido:", err);
@@ -333,10 +333,10 @@ app.post("/api/pedido", (req, res) => {
 
 app.put("/api/pedido/:id", (req, res) => {
   const { id } = req.params;
-  const { data, fornecedorId, status, total } = req.body;
+  const { data, clienteId, status, total } = req.body;
   db.run(
-    "UPDATE pedido SET data = ?, fornecedorId = ?, status = ?, total = ? WHERE id = ?",
-    [data, fornecedorId, status, total, id],
+    "UPDATE pedido SET data = ?, clienteId = ?, status = ?, total = ? WHERE id = ?",
+    [data, clienteId, status, total, id],
     function (err) {
       if (err) {
         res.status(500).json({ error: err.message });

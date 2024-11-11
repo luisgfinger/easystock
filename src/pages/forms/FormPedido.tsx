@@ -2,7 +2,7 @@ import { usePedido } from "../../context/PedidoContext";
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../styles/form.css";
-import { useFornecedor } from "../../context/FornecedorContext";
+import {useCliente} from "../../context/ClienteContext";
 import { useItemPedido } from "../../context/ItemPedidoContext";
 import { useProduto } from "../../context/ProdutoContext";
 import { useTransacao } from "../../context/TransacaoContext";
@@ -15,10 +15,10 @@ interface FormProps {
 const FormPedido: React.FC<FormProps> = ({ edit, entrada }) => {
   const { pedidos, addPedido, updatePedido, getUltimoPedidoId } = usePedido();
   const { transacoes, addTransacao } = useTransacao();
-  const { fornecedores } = useFornecedor();
+  const {clientes} = useCliente();
   const { produtos } = useProduto();
   const { itemPedidos, addItemPedido } = useItemPedido();
-  const [fornecedorId, setFornecedorId] = useState(0);
+  const [clienteId, setClienteId] = useState(0);
   const [status, setStatus] = useState("");
   const [total, setTotal] = useState(0);
   const [idProduto, setIdProduto] = useState(0);
@@ -49,7 +49,7 @@ const FormPedido: React.FC<FormProps> = ({ edit, entrada }) => {
     if (edit && id) {
       const pedido = pedidos.find((p) => p.id === Number(id));
       if (pedido) {
-        setFornecedorId(fornecedorId);
+        setClienteId(clienteId);
         setStatus(pedido.status);
         setTotal(pedido.total);
       }
@@ -59,13 +59,16 @@ const FormPedido: React.FC<FormProps> = ({ edit, entrada }) => {
   const handleAddItem = (e: React.FormEvent) => {
     e.preventDefault();
 
+    console.log(clienteId)
+    console.log(idProduto)
+
     const ultimoPedidoId = getUltimoPedidoId();
     const idPedido = ultimoPedidoId !== null ? ultimoPedidoId + 1 : 1;
 
     const novoPedido = {
       id: id ? Number(id) : idPedido,
       data: new Date(),
-      fornecedorId: fornecedorId,
+      clienteId: clienteId,
       status,
       total,
     };
@@ -132,16 +135,15 @@ const FormPedido: React.FC<FormProps> = ({ edit, entrada }) => {
     <div className="form-page flex-column">
       <h3>{edit ? "Editar Pedido" : "Cadastro de Pedido"}</h3>
       <form onSubmit={handleSubmitPedido} className="flex-column">
-        <label>Fornecedor</label>
+        <label>Cliente</label>
         <select
-          value={fornecedorId}
-          onChange={(e) => setFornecedorId(Number(e.target.value))}
+          value={clienteId}
+          onChange={(e) => setClienteId(Number(e.target.value))}
         >
-          <option value="">Selecione um fornecedor</option>
-
-          {fornecedores.map((fornecedor) => (
-            <option key={fornecedor.id} value={fornecedor.id}>
-              {fornecedor.nome}
+          <option value="">Selecione um cliente</option>
+          {clientes.map((cliente) => (
+            <option key={cliente.id} value={cliente.id}>
+              {cliente.nome}
             </option>
           ))}
         </select>
@@ -170,13 +172,7 @@ const FormPedido: React.FC<FormProps> = ({ edit, entrada }) => {
               }}
             >
               <option value="">Selecione um produto</option>
-              {produtos
-                .filter(
-                  (produto) =>
-                    produto.quantidade > 0 &&
-                    produto.fornecedorId === fornecedorId
-                )
-                .map((produto) => (
+              {produtos.map((produto) => (
                   <option key={produto.id} value={produto.id}>
                     {produto.nome}
                   </option>

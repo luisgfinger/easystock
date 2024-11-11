@@ -23,10 +23,15 @@ const FormFornecedores: React.FC<FormProps> = ({ edit }) => {
 
   const { id } = useParams<{ id: string }>();
 
-  const usuarioLogado = localStorage.getItem("usuarioLogado");
-  if(!usuarioLogado){
-    navigate("/login")
-  }
+  useEffect(() => {
+    const usuarioLogado = localStorage.getItem("usuarioLogado");
+    const admin = localStorage.getItem("admin")
+    if (!usuarioLogado || !admin) {
+      navigate("/login");
+    }
+  }, [navigate]);
+  
+  
 
   useEffect(() => {
     if (edit && id) {

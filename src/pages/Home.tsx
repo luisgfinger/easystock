@@ -80,8 +80,8 @@ export default function Home() {
   const logout = () => {
     localStorage.removeItem("usuarioLogado");
     localStorage.removeItem("admin");
-    navigate("/")
-  }
+    navigate("/");
+  };
 
   return (
     <div className="container">
@@ -95,9 +95,13 @@ export default function Home() {
             <li>
               <a href="/fornecedores">Fornecedores</a>
             </li>
-            <li>
-              <a href="/clientes">Clientes</a>
-            </li>
+            {admin ? (
+              <li>
+                <a href="/clientes">Clientes</a>
+              </li>
+            ) : (
+              <></>
+            )}
             <li>
               <a href="/produtos">Produtos</a>
             </li>
@@ -110,7 +114,12 @@ export default function Home() {
           </ul>
         </nav>
         {usuarioLogado ? (
-          <h3 className="desktop-only" onClick={logout}>Logout</h3>
+          <>
+            <h3 className="logout desktop-only" onClick={logout}>
+              Logout
+            </h3>
+            {admin ? <p>admin</p> : null}
+          </>
         ) : (
           <span className="profileIcon desktop-only" onClick={login}>
             <ProfileIcon />
@@ -129,9 +138,13 @@ export default function Home() {
               <li>
                 <a href="/fornecedores">Fornecedores</a>
               </li>
-              <li>
-                <a href="/clientes">Clientes</a>
-              </li>
+              {admin ? (
+                <li>
+                  <a href="/clientes">Clientes</a>
+                </li>
+              ) : (
+                <></>
+              )}
               <li>
                 <a href="/produtos">Produtos</a>
               </li>
@@ -178,12 +191,17 @@ export default function Home() {
                           path="/fornecedores"
                           element={
                             <>
-                              <div className="add-button">
-                                <Button
-                                  text="Adicionar"
-                                  onClick={addFornecedor}
-                                />
-                              </div>
+                              {admin ? (
+                                <div className="add-button">
+                                  <Button
+                                    text="Adicionar"
+                                    onClick={addFornecedor}
+                                  />
+                                </div>
+                              ) : (
+                                <></>
+                              )}
+
                               <form className="filtro-form flex-column">
                                 <label>Nome: </label>
                                 <input
@@ -271,9 +289,17 @@ export default function Home() {
                           path="/produtos"
                           element={
                             <>
-                              <div className="add-button">
-                                <Button text="Adicionar" onClick={addProduto} />
-                              </div>
+                              {admin ? (
+                                <div className="add-button">
+                                  <Button
+                                    text="Adicionar"
+                                    onClick={addProduto}
+                                  />
+                                </div>
+                              ) : (
+                                <></>
+                              )}
+
                               <form className="filtro-form flex-column">
                                 <label>Nome: </label>
                                 <input
@@ -404,12 +430,17 @@ export default function Home() {
                           path="/transacoes"
                           element={
                             <>
-                              <div className="add-button">
-                                <Button
-                                  text="Adicionar entrada"
-                                  onClick={addTransacao}
-                                />
-                              </div>
+                              {admin ? (
+                                <div className="add-button">
+                                  <Button
+                                    text="Adicionar entrada"
+                                    onClick={addTransacao}
+                                  />
+                                </div>
+                              ) : (
+                                <></>
+                              )}
+
                               <form className="filtro-form flex-column">
                                 <label>Data: </label>
                                 <input

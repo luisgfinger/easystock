@@ -4,7 +4,7 @@ import axios from 'axios';
 interface Pedido {
   id: number;
   data: Date;
-  fornecedorId: number;
+  clienteId: number;
   status: string;
   total: number;
 }

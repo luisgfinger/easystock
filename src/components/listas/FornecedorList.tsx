@@ -1,23 +1,29 @@
-
 import { useFornecedor } from "../../context/FornecedorContext";
 import Button from "../Ui/Button";
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/list.css";
 
-interface FornecedorListProps{
-  buscaNome?: string,
-  buscaContato?: string
+interface FornecedorListProps {
+  buscaNome?: string;
+  buscaContato?: string;
 }
 
-const FornecedorList: React.FC<FornecedorListProps> = ({ buscaNome, buscaContato }) => {
+const FornecedorList: React.FC<FornecedorListProps> = ({
+  buscaNome,
+  buscaContato,
+}) => {
   const { fornecedores } = useFornecedor();
   const navigate = useNavigate();
-  
-  const usuarioLogado = localStorage.getItem("usuarioLogado");
-  if(!usuarioLogado){
-    navigate("/login")
-  }
+  const admin = localStorage.getItem("admin");
+
+  useEffect(() => {
+    const usuarioLogado = localStorage.getItem("usuarioLogado");
+    
+    if (!usuarioLogado) {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const editFornecedor = (id: number) => {
     navigate(`/fornecedores/editar/${id}`);
@@ -48,21 +54,29 @@ const FornecedorList: React.FC<FornecedorListProps> = ({ buscaNome, buscaContato
               <li>
                 <h3>{fornecedor.nome}</h3>
               </li>
-              <li><p>{fornecedor.contato}</p></li>
-              <li><p>{fornecedor.endereco}</p></li>
+              <li>
+                <p>{fornecedor.contato}</p>
+              </li>
+              <li>
+                <p>{fornecedor.endereco}</p>
+              </li>
               <li>{fornecedor.cnpj}</li>
-              <div className="delete-edit-button flex-column">
-                <Button
-                  text="Editar fornecedor"
-                  onClick={() => editFornecedor(fornecedor.id)}
-                />
-                <span className="delete-button">
+              {admin ? (
+                <div className="delete-edit-button flex-column">
                   <Button
-                    text="Excluir"
-                    onClick={() => deleteFornecedor(fornecedor.id)}
+                    text="Editar fornecedor"
+                    onClick={() => editFornecedor(fornecedor.id)}
                   />
-                </span>
-              </div>
+                  <span className="delete-button">
+                    <Button
+                      text="Excluir"
+                      onClick={() => deleteFornecedor(fornecedor.id)}
+                    />
+                  </span>
+                </div>
+              ) : (
+                <></>
+              )}
             </ul>
           </li>
         ))

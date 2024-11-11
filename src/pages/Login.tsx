@@ -22,6 +22,7 @@ const Login: React.FC = () => {
     
   const usuario = usuarios.find((u) => u.email === email);
 
+
   if(usuario){
     if(usuario.senha === password){
         localStorage.setItem("usuarioLogado", JSON.stringify(usuario));

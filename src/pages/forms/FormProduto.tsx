@@ -14,17 +14,21 @@ const FormProduto: React.FC<FormProps> = ({ edit }) => {
   const { fornecedores } = useFornecedor();
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
-  const [preco, setPreco] = useState(0);
-  const [quantidade, setQuantidade] = useState(0);
+  const [preco, setPreco] = useState(0.5);
+  const [quantidade, setQuantidade] = useState(1);
   const [imagemFile, setImagemFile] = useState<File | null>(null); 
   const [fornecedorId, setFornecedorId] = useState(1);
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
-  const usuarioLogado = localStorage.getItem("usuarioLogado");
-  if(!usuarioLogado){
-    navigate("/login")
-  }
+  useEffect(() => {
+    const usuarioLogado = localStorage.getItem("usuarioLogado");
+    const admin = localStorage.getItem("admin")
+    if (!usuarioLogado || !admin) {
+      navigate("/login");
+    }
+  }, [navigate]);
+  
 
   useEffect(() => {
     if (edit && id) {
@@ -109,6 +113,8 @@ const FormProduto: React.FC<FormProps> = ({ edit }) => {
           type="number"
           value={preco}
           onChange={(e) => setPreco(Number(e.target.value))}
+          min={0.5}
+          step={0.5}
           required
         />
 
@@ -117,6 +123,7 @@ const FormProduto: React.FC<FormProps> = ({ edit }) => {
           type="number"
           value={quantidade}
           onChange={(e) => setQuantidade(Number(e.target.value))}
+          min="1"
           required
         />
 

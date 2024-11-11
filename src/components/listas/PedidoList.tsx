@@ -1,8 +1,8 @@
-import { useFornecedor } from "../../context/FornecedorContext";
+import { useCliente } from "../../context/ClienteContext";
 import { useItemPedido } from "../../context/ItemPedidoContext";
 import { usePedido } from "../../context/PedidoContext";
 import Button from "../Ui/Button";
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useProduto } from "../../context/ProdutoContext";
 import { useTransacao } from "../../context/TransacaoContext";
@@ -16,16 +16,19 @@ interface PedidoListProps {
 
 const PedidoList: React.FC<PedidoListProps> = ({ buscaData, buscaStatus, ordenacaoData, ordenacaoValor }) => {
   const { pedidos } = usePedido();
-  const { fornecedores } = useFornecedor();
+  const { clientes } = useCliente();
   const { itemPedidos } = useItemPedido();
   const { produtos } = useProduto();
   const {transacoes} = useTransacao();
   const navigate = useNavigate();
 
-  const usuarioLogado = localStorage.getItem("usuarioLogado");
-  if(!usuarioLogado){
-    navigate("/login")
-  }
+  useEffect(() => {
+    const usuarioLogado = localStorage.getItem("usuarioLogado");
+    if (!usuarioLogado) {
+      navigate("/login");
+    }
+  }, [navigate]);
+  
 
   const editPedido = (id: number) => {
     navigate(`/pedidos/editar/${id}`);
@@ -74,7 +77,7 @@ const PedidoList: React.FC<PedidoListProps> = ({ buscaData, buscaStatus, ordenac
       {pedidosFiltrados.length > 0 ? (
         pedidosFiltrados.map((pedido) => {
           pedido.data = new Date(pedido.data)
-          const fornecedor = fornecedores.find((f) => f.id === pedido.fornecedorId);
+          const cliente = clientes.find((f) => f.id === pedido.clienteId);
 
           const itensPedido = itemPedidos.filter(item => item.pedidoId === pedido.id);
 
@@ -88,8 +91,8 @@ const PedidoList: React.FC<PedidoListProps> = ({ buscaData, buscaStatus, ordenac
               <ul className="inside flex-column">
                 <li>Data: {formatarData(pedido.data.toISOString())}</li>
                 <li>
-                  {fornecedor ? (
-                    <p>Fornecedor: {fornecedor.nome}</p>
+                  {cliente ? (
+                    <p>Cliente: {cliente.nome}</p>
                   ) : (
                     <></>
                   )}

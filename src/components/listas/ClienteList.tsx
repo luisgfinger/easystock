@@ -1,6 +1,6 @@
 import { useCliente } from "../../context/ClienteContext";
 import Button from "../Ui/Button";
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface ClienteListProps {
@@ -12,10 +12,15 @@ const ClienteList: React.FC<ClienteListProps> = ({ buscaNome, buscaCpf_cnpj }) =
   const { clientes } = useCliente();
   const navigate = useNavigate();
 
-  const usuarioLogado = localStorage.getItem("usuarioLogado");
-  if(!usuarioLogado){
-    navigate("/login")
-  }
+  useEffect(() => {
+    const usuarioLogado = localStorage.getItem("usuarioLogado");
+    const admin = localStorage.getItem("admin")
+    if (!usuarioLogado || !admin) {
+      navigate("/login");
+    }
+  }, [navigate]);
+  
+  
 
   const editCliente = (id: number) => {
     navigate(`/clientes/editar/${id}`);
